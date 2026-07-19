@@ -190,7 +190,7 @@
   },
   "platform_customizations": {
     "custom_css": [
-      ".template-404 .main-content,.template-cart .main-content,.template-page.page-type-contact .main-content,.template-page.page-type-faqs .main-content,.template-page:not([class*=\"page-type\"]) .main-content,.template-policy .main-content {padding-bottom: 0 !important;}"
+      ".template-404 .main-content{padding-bottom: 0 !important;}"
     ]
   }
 }
