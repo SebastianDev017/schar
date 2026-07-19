@@ -32,6 +32,7 @@
       "block_order": [
         "image_d7RNTQ"
       ],
+      "custom_css": [],
       "name": "Portada",
       "settings": {
         "content_position": "center-left",
@@ -40,8 +41,8 @@
         "section_height_desktop": 100,
         "section_height_mobile": 85,
         "section_max_height": 800,
-        "padding_top": 60,
-        "padding_bottom": 60,
+        "padding_top": 0,
+        "padding_bottom": 0,
         "overlay_color": "#2c1a0e",
         "overlay_opacity": 50,
         "heading_tag": "h2",
