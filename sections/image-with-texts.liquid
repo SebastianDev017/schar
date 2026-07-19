@@ -1,0 +1,699 @@
+{%- comment -%}
+  Sección: Imagen con Texto – Dr. Schär México
+  ✔ 2 columnas desktop: texto izq + imagen der (invertible)
+  ✔ 1 columna mobile: imagen arriba, texto abajo
+  ✔ Aspect ratio de imagen seleccionable
+  ✔ Máxima personalización (40+ controles)
+{%- endcomment -%}
+
+{%- liquid
+  assign image = section.settings.image
+  assign mobile_image = section.settings.mobile_image
+  assign heading = section.settings.heading
+  assign heading_tag = section.settings.heading_tag | default: 'h2'
+  assign text_content = section.settings.text_content
+  assign button_label = section.settings.button_label
+  assign button_link = section.settings.button_link
+  assign has_button = false
+  if button_label != blank and button_link != blank
+    assign has_button = true
+  endif
+
+  assign image_position = section.settings.image_position | default: 'right'
+  assign image_ratio = section.settings.image_ratio | default: 'portrait'
+  assign image_custom_ratio = section.settings.image_custom_ratio | default: 75
+  assign vertical_align = section.settings.vertical_align | default: 'center'
+
+  assign heading_size_desktop = section.settings.heading_size_desktop | default: 48
+  assign heading_size_mobile = section.settings.heading_size_mobile | default: 32
+  assign heading_color = section.settings.heading_color | default: '#2C1A0E'
+  assign heading_line_height = section.settings.heading_line_height | default: 110
+  assign text_size_desktop = section.settings.text_size_desktop | default: 16
+  assign text_size_mobile = section.settings.text_size_mobile | default: 15
+  assign text_color = section.settings.text_color | default: '#2C1A0E'
+  assign bg_color = section.settings.bg_color | default: '#E8DDD0'
+  assign padding_top = section.settings.padding_top | default: 0
+  assign padding_bottom = section.settings.padding_bottom | default: 0
+  assign content_gap = section.settings.content_gap | default: 60
+  assign image_col_width = section.settings.image_col_width | default: 50
+  assign text_padding = section.settings.text_padding | default: 40
+
+  assign btn_bg = section.settings.button_bg_color | default: '#2C1A0E'
+  assign btn_text = section.settings.button_text_color | default: '#FFFFFF'
+  assign btn_bg_hover = section.settings.button_bg_hover | default: '#C41E3A'
+  assign btn_text_hover = section.settings.button_text_hover | default: '#FFFFFF'
+  assign btn_radius = section.settings.button_border_radius | default: 50
+  assign btn_size_desktop = section.settings.button_size_desktop | default: 14
+  assign btn_size_mobile = section.settings.button_size_mobile | default: 13
+  assign btn_margin_top = section.settings.button_margin_top | default: 28
+-%}
+
+{%- capture ratio_class -%}
+  {%- case image_ratio -%}
+    {%- when 'portrait' -%}schar-iwt__img-wrap--portrait
+    {%- when 'square' -%}schar-iwt__img-wrap--square
+    {%- when 'landscape' -%}schar-iwt__img-wrap--landscape
+    {%- when 'auto' -%}schar-iwt__img-wrap--auto
+    {%- when 'custom' -%}schar-iwt__img-wrap--custom
+  {%- endcase -%}
+{%- endcapture -%}
+
+<section class="schar-iwt schar-iwt--img-{{ image_position }}" data-section-id="{{ section.id }}">
+  <div class="schar-iwt__inner schar-iwt__valign--{{ vertical_align }}">
+
+    {%- comment -%} COLUMNA DE TEXTO {%- endcomment -%}
+    <div class="schar-iwt__text-col" data-aos="fade-up">
+      {%- unless heading == blank -%}
+        <{{ heading_tag }} class="schar-iwt__heading">{{ heading }}</{{ heading_tag }}>
+      {%- endunless -%}
+
+      {%- unless text_content == blank -%}
+        <div class="schar-iwt__text">{{ text_content }}</div>
+      {%- endunless -%}
+
+      {%- if has_button -%}
+        <div class="schar-iwt__btn-wrap">
+          <a class="schar-iwt__btn" href="{{ button_link }}" {%- if button_link contains 'http' %} target="_blank" rel="noopener"{% endif -%}>
+            {{ button_label }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} COLUMNA DE IMAGEN {%- endcomment -%}
+    {%- if image != blank -%}
+      <div class="schar-iwt__img-col" data-aos="fade-up" data-aos-delay="150">
+        <div class="schar-iwt__img-wrap {{ ratio_class }}">
+          <picture>
+            {%- if mobile_image != blank -%}
+              <source media="(max-width: 680px)" srcset="{{ mobile_image | image_url: width: 800 }}">
+            {%- endif -%}
+            <img
+              src="{{ image | image_url: width: 1200 }}"
+              alt="{{ image.alt | escape | default: heading | strip_html | escape }}"
+              class="schar-iwt__img"
+              loading="lazy"
+            >
+          </picture>
+        </div>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Imagen con Texto",
+  "tag": "section",
+  "class": "schar-iwt-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "── IMAGEN ──"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Imagen mobile (opcional)"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Proporción de imagen",
+      "default": "portrait",
+      "options": [
+        { "value": "portrait", "label": "Retrato (3:4)" },
+        { "value": "square", "label": "Cuadrado (1:1)" },
+        { "value": "landscape", "label": "Paisaje (4:3)" },
+        { "value": "auto", "label": "Ajustado a imagen" },
+        { "value": "custom", "label": "Personalizado" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "image_custom_ratio",
+      "label": "Ratio personalizado (%)",
+      "min": 40,
+      "max": 160,
+      "step": 5,
+      "default": 75,
+      "unit": "%",
+      "info": "Solo aplica con proporción 'Personalizado'. Alto relativo al ancho."
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Posición de la imagen",
+      "default": "right",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "right", "label": "Derecha" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "image_col_width",
+      "label": "Ancho columna imagen (%)",
+      "min": 30,
+      "max": 70,
+      "step": 5,
+      "default": 50,
+      "unit": "%"
+    },
+    {
+      "type": "header",
+      "content": "── CONTENIDO ──"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Título",
+      "default": "<p><strong>calidad</strong></p>"
+    },
+    {
+      "type": "richtext",
+      "id": "text_content",
+      "label": "Texto",
+      "default": "<p>La calidad ha sido, y siempre será, el pilar de todo lo que hacemos.</p><p>Desde la selección de los mejores cereales sin gluten hasta el tiempo que dedicamos a nuestros clientes, la calidad se refleja en el esfuerzo invertido.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texto del botón"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Enlace del botón"
+    },
+    {
+      "type": "header",
+      "content": "── LAYOUT ──"
+    },
+    {
+      "type": "select",
+      "id": "vertical_align",
+      "label": "Alineación vertical",
+      "default": "center",
+      "options": [
+        { "value": "top", "label": "Arriba" },
+        { "value": "center", "label": "Centro" },
+        { "value": "bottom", "label": "Abajo" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "label": "Espacio entre columnas (px)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "text_padding",
+      "label": "Padding del texto (px)",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── FONDO Y ESPACIADO ──"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#E8DDD0"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding superior (px)",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding inferior (px)",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── TÍTULO ──"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Etiqueta HTML",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Tamaño desktop (px)",
+      "min": 24,
+      "max": 100,
+      "step": 2,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Tamaño mobile (px)",
+      "min": 20,
+      "max": 72,
+      "step": 2,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "label": "Line-height (%)",
+      "min": 80,
+      "max": 160,
+      "step": 5,
+      "default": 110,
+      "unit": "%"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "header",
+      "content": "── TEXTO ──"
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Tamaño desktop (px)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Tamaño mobile (px)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "header",
+      "content": "── BOTÓN ──"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Fondo",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Texto",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_hover",
+      "label": "Fondo hover",
+      "default": "#C41E3A"
+    },
+    {
+      "type": "color",
+      "id": "button_text_hover",
+      "label": "Texto hover",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Border radius (px)",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_size_desktop",
+      "label": "Tamaño texto desktop (px)",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_size_mobile",
+      "label": "Tamaño texto mobile (px)",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_margin_top",
+      "label": "Margen superior (px)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 28,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Imagen con Texto",
+      "category": "Acerca de"
+    }
+  ]
+}
+{% endschema %}
+
+{% style %}
+  @font-face {
+    font-family: 'Times ExtraBold';
+    src: url('https://cdn.shopify.com/s/files/1/0991/5082/3710/files/Times-ExtraBold.otf?v=1777160115') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  #shopify-section-{{ section.id }} {
+    --iwt-font-heading: 'Times ExtraBold', 'Playfair Display', serif;
+    --iwt-font-body: 'Cabin', 'Inter', 'Poppins', sans-serif;
+    --iwt-bg: {{ bg_color }};
+    --iwt-pt: {{ padding_top }}px;
+    --iwt-pb: {{ padding_bottom }}px;
+    --iwt-gap: {{ content_gap }}px;
+    --iwt-img-col: {{ image_col_width }}%;
+    --iwt-text-pad: {{ text_padding }}px;
+    --iwt-custom-ratio: {{ image_custom_ratio }}%;
+
+    --iwt-h-desktop: {{ heading_size_desktop }}px;
+    --iwt-h-mobile: {{ heading_size_mobile }}px;
+    --iwt-h-color: {{ heading_color }};
+    --iwt-h-lh: {{ heading_line_height }}%;
+    --iwt-t-desktop: {{ text_size_desktop }}px;
+    --iwt-t-mobile: {{ text_size_mobile }}px;
+    --iwt-t-color: {{ text_color }};
+
+    --iwt-btn-bg: {{ btn_bg }};
+    --iwt-btn-text: {{ btn_text }};
+    --iwt-btn-bg-hover: {{ btn_bg_hover }};
+    --iwt-btn-text-hover: {{ btn_text_hover }};
+    --iwt-btn-radius: {{ btn_radius }}px;
+    --iwt-btn-desktop: {{ btn_size_desktop }}px;
+    --iwt-btn-mobile: {{ btn_size_mobile }}px;
+    --iwt-btn-mt: {{ btn_margin_top }}px;
+  }
+
+  /* =============================================
+     BASE
+     ============================================= */
+  .schar-iwt {
+    background-color: var(--iwt-bg);
+    padding: var(--iwt-pt) 0 var(--iwt-pb);
+    margin-bottom: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .schar-iwt__inner {
+    display: grid;
+    grid-template-columns: 1fr var(--iwt-img-col);
+    gap: var(--iwt-gap);
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  /* Vertical alignment */
+  .schar-iwt__valign--top    { align-items: start; }
+  .schar-iwt__valign--center { align-items: center; }
+  .schar-iwt__valign--bottom { align-items: end; }
+
+  /* Imagen a la izquierda: invertir orden */
+  .schar-iwt--img-left .schar-iwt__inner {
+    grid-template-columns: var(--iwt-img-col) 1fr;
+  }
+
+  .schar-iwt--img-left .schar-iwt__text-col { order: 2; }
+  .schar-iwt--img-left .schar-iwt__img-col  { order: 1; }
+
+  /* =============================================
+     TEXTO
+     ============================================= */
+  .schar-iwt__text-col {
+    padding: var(--iwt-text-pad) var(--header-desktop-padding, 63px);
+  }
+
+  .schar-iwt__heading,
+  .schar-iwt__heading * {
+    font-family: var(--iwt-font-heading) !important;
+    font-style: normal;
+    font-weight: 400 !important;
+    color: var(--iwt-h-color);
+    font-size: clamp(
+      var(--iwt-h-mobile),
+      calc(var(--iwt-h-mobile) + ({{ heading_size_desktop }} - {{ heading_size_mobile }}) * ((100vw - 375px) / (1440 - 375))),
+      var(--iwt-h-desktop)
+    );
+    line-height: var(--iwt-h-lh);
+    margin: 0 0 20px 0;
+  }
+
+  .schar-iwt__heading strong,
+  .schar-iwt__heading b {
+    font-weight: 400 !important;
+  }
+
+  .schar-iwt__text,
+  .schar-iwt__text * {
+    font-family: var(--iwt-font-body);
+    font-size: clamp(
+      var(--iwt-t-mobile),
+      calc(var(--iwt-t-mobile) + ({{ text_size_desktop }} - {{ text_size_mobile }}) * ((100vw - 375px) / (1440 - 375))),
+      var(--iwt-t-desktop)
+    );
+    line-height: 1.7;
+    color: var(--iwt-t-color);
+  }
+
+  .schar-iwt__text p { margin: 0; }
+  .schar-iwt__text p + p { margin-top: 16px; }
+
+  .schar-iwt__text strong,
+  .schar-iwt__text b {
+    font-weight: 600;
+  }
+
+  .schar-iwt__text a {
+    color: var(--iwt-h-color);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .schar-iwt__text a:hover {
+    color: var(--iwt-btn-bg-hover);
+  }
+
+  /* =============================================
+     BOTÓN
+     ============================================= */
+  .schar-iwt__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    padding: 0 32px;
+    background-color: var(--iwt-btn-bg);
+    color: var(--iwt-btn-text);
+    border: none;
+    border-radius: var(--iwt-btn-radius);
+    font-family: var(--iwt-font-body);
+    font-size: clamp(
+      var(--iwt-btn-mobile),
+      calc(var(--iwt-btn-mobile) + ({{ btn_size_desktop }} - {{ btn_size_mobile }}) * ((100vw - 375px) / (1440 - 375))),
+      var(--iwt-btn-desktop)
+    );
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  }
+
+  .schar-iwt__btn:hover {
+    background-color: var(--iwt-btn-bg-hover);
+    color: var(--iwt-btn-text-hover);
+    transform: translateY(-1px);
+  }
+
+  .schar-iwt__btn-wrap {
+    margin-top: var(--iwt-btn-mt);
+  }
+
+  /* =============================================
+     IMAGEN
+     ============================================= */
+  .schar-iwt__img-col {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .schar-iwt__img-wrap {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 24px;
+  }
+
+  .schar-iwt__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  /* Ratios */
+  .schar-iwt__img-wrap--portrait {
+    aspect-ratio: 3 / 4;
+  }
+
+  .schar-iwt__img-wrap--square {
+    aspect-ratio: 1 / 1;
+  }
+
+  .schar-iwt__img-wrap--landscape {
+    aspect-ratio: 4 / 3;
+  }
+
+  .schar-iwt__img-wrap--auto {
+    aspect-ratio: unset;
+  }
+
+  .schar-iwt__img-wrap--auto .schar-iwt__img {
+    height: auto;
+    object-fit: contain;
+  }
+
+  .schar-iwt__img-wrap--custom {
+    aspect-ratio: unset;
+    padding-bottom: var(--iwt-custom-ratio);
+  }
+
+  .schar-iwt__img-wrap--custom .schar-iwt__img {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  /* =============================================
+     MOBILE
+     ============================================= */
+  @media (max-width: 680px) {
+    .schar-iwt__inner {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* Imagen siempre arriba en mobile */
+    .schar-iwt__img-col { order: 1; }
+    .schar-iwt__text-col { order: 2; }
+
+    .schar-iwt__text-col {
+      padding: 28px var(--header-mobile-padding, 22px) 36px;
+    }
+
+    /* Sin border-radius en mobile (full-width) */
+    .schar-iwt__img-wrap {
+      border-radius: 0;
+    }
+
+    .schar-iwt__img-wrap--portrait,
+    .schar-iwt__img-wrap--square,
+    .schar-iwt__img-wrap--landscape {
+      aspect-ratio: unset;
+      max-height: 400px;
+    }
+
+    .schar-iwt__heading {
+      margin-bottom: 16px;
+    }
+  }
+
+  @media (min-width: 681px) and (max-width: 834px) {
+    .schar-iwt__text-col {
+      padding: var(--iwt-text-pad) var(--header-tablet-padding, 46px);
+    }
+  }
+
+  @media (min-width: 835px) and (max-width: 1439px) {
+    .schar-iwt__text-col {
+      padding: var(--iwt-text-pad) var(--header-laptop-padding, 46px);
+    }
+  }
+
+  @media (hover: hover) {
+    .schar-iwt__btn:hover {
+      background-color: var(--iwt-btn-bg-hover);
+      color: var(--iwt-btn-text-hover);
+    }
+  }
+
+  @media screen and (max-width: 760px) {
+  .schar-iwt {
+    padding: 0;
+  }
+}
+{% endstyle %}

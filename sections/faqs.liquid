@@ -1,0 +1,59 @@
+{{- 'css-faqs.css' | asset_url | stylesheet_tag -}}
+<script src="{{ 'js-faqs.js' | asset_url }}" defer></script>
+
+{%- if section.blocks.size > 0 -%}
+  <div class="faqs-section page-content" data-section-id="{{- section.id -}}" data-section-type="faqs">
+    {%- for block in section.blocks -%}
+      {%- liquid 
+        assign title = block.settings.title
+        assign answer = block.settings.answer
+      -%}
+
+      {%- if title != blank and answer != blank -%}
+        <div class="faq-item" {{- block.shopify_attributes -}}>
+          <div class="faq-item-header">
+            <p class="faq-item-title">{{- title -}}</p>
+            <span class="faq-item-icon"></span>
+          </div>
+          <div class="faq-item-content-wrapper">
+            <div class="faq-item-content page-text page-text-fit">{{- answer -}}</div>
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Preguntas frecuentes",
+  "blocks": [
+    {
+      "name": "Pregunta",
+      "type": "text",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Contenido"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Pregunta"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Respuesta"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Page",
+      "name": "Preguntas frecuentes"
+    }
+  ]
+}
+{% endschema %}

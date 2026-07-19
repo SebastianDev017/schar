@@ -1,0 +1,1002 @@
+{%- comment -%}
+  Section 6: Carrusel de Productos – Dr. Schär México
+  ✔ Modo carrusel (Swiper) o grilla estática
+  ✔ Loop infinito opcional
+  ✔ Máximo 10 productos
+  ✔ Navegación se oculta si no hay suficientes productos
+  ✔ Slides por vista correctos vía JS (no CSS calc)
+  ✔ Máxima personalización (55+ controles)
+{%- endcomment -%}
+
+{%- comment -%} Swiper CSS + tema base para product-card {%- endcomment -%}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+
+{%- liquid
+  assign collection = section.settings.collection
+  assign max_products = section.settings.max_products | default: 10
+  assign use_carousel = section.settings.use_carousel
+  assign enable_loop = section.settings.enable_loop
+  assign title = section.settings.title
+  assign subtitle = section.settings.subtitle
+  assign text = section.settings.text
+  assign button_label = section.settings.button_label
+  assign button_link = section.settings.button_link
+  assign heading_tag = section.settings.heading_tag | default: 'h2'
+  assign text_alignment = section.settings.text_alignment | default: 'center'
+  assign has_button = false
+
+  if button_label != blank and button_link != blank
+    assign has_button = true
+  endif
+
+  assign collection_size = 0
+  if collection != blank
+    assign total = collection.products | size
+    if total > max_products
+      assign collection_size = max_products
+    else
+      assign collection_size = total
+    endif
+  endif
+
+  assign heading_size_desktop = section.settings.heading_size_desktop | default: 56
+  assign heading_size_mobile = section.settings.heading_size_mobile | default: 32
+  assign subtitle_size_desktop = section.settings.subtitle_size_desktop | default: 13
+  assign subtitle_size_mobile = section.settings.subtitle_size_mobile | default: 11
+  assign text_size_desktop = section.settings.text_size_desktop | default: 18
+  assign text_size_mobile = section.settings.text_size_mobile | default: 15
+  assign btn_size_desktop = section.settings.button_size_desktop | default: 13
+  assign btn_size_mobile = section.settings.button_size_mobile | default: 12
+
+  assign bg_color = section.settings.bg_color | default: '#E8DDD0'
+  assign heading_color = section.settings.heading_color | default: '#2C1A0E'
+  assign subtitle_color = section.settings.subtitle_color | default: '#C41E3A'
+  assign text_color = section.settings.text_color | default: '#2C1A0E'
+  assign arrow_bg = section.settings.arrow_bg_color | default: '#2C1A0E'
+  assign arrow_icon = section.settings.arrow_icon_color | default: '#FFFFFF'
+  assign arrow_bg_hover = section.settings.arrow_bg_hover | default: '#C41E3A'
+  assign dot_color = section.settings.dot_color | default: '#2C1A0E'
+  assign dot_active_color = section.settings.dot_active_color | default: '#C41E3A'
+  assign btn_bg = section.settings.button_bg_color | default: '#2C1A0E'
+  assign btn_text = section.settings.button_text_color | default: '#FFFFFF'
+  assign btn_bg_hover = section.settings.button_bg_hover | default: '#C41E3A'
+  assign btn_text_hover = section.settings.button_text_hover | default: '#FFFFFF'
+  assign btn_radius = section.settings.button_border_radius | default: 50
+  assign btn_height = section.settings.button_height | default: 48
+  assign btn_padding_x = section.settings.button_padding_x | default: 32
+
+  assign padding_top = section.settings.padding_top | default: 80
+  assign padding_bottom = section.settings.padding_bottom | default: 80
+  assign heading_line_height = section.settings.heading_line_height | default: 110
+  assign heading_margin_bottom = section.settings.heading_margin_bottom | default: 32
+  assign subtitle_margin_bottom = section.settings.subtitle_margin_bottom | default: 12
+  assign text_margin_top = section.settings.text_margin_top | default: 16
+  assign carousel_margin_top = section.settings.carousel_margin_top | default: 40
+  assign button_margin_top = section.settings.button_margin_top | default: 32
+  assign slides_gap = section.settings.slides_gap | default: 20
+  assign arrow_size = section.settings.arrow_size | default: 40
+  assign show_dots = section.settings.show_dots
+  assign show_arrows = section.settings.show_arrows
+  assign slides_desktop = section.settings.slides_per_view_desktop | default: 4
+  assign slides_tablet = section.settings.slides_per_view_tablet | default: 3
+  assign slides_mobile = section.settings.slides_per_view_mobile | default: 2
+  assign coming_soon_text = section.settings.coming_soon_text | default: 'Próximamente...'
+  assign show_coming_soon = false
+  if collection == blank or collection_size == 0
+    assign show_coming_soon = true
+  endif
+-%}
+
+<section
+  class="schar-fc"
+  id="schar-fc-{{ section.id }}"
+  data-section-id="{{ section.id }}"
+>
+
+  {%- comment -%} TÍTULO + INFO {%- endcomment -%}
+  <div class="schar-fc__info" style="text-align: {{ text_alignment }};" data-aos="fade-up">
+    {%- unless subtitle == blank -%}
+      <p class="schar-fc__subtitle">{{ subtitle }}</p>
+    {%- endunless -%}
+    {%- unless title == blank -%}
+      <{{ heading_tag }} class="schar-fc__heading">{{ title }}</{{ heading_tag }}>
+    {%- endunless -%}
+    {%- unless text == blank -%}
+      <div class="schar-fc__text">{{ text }}</div>
+    {%- endunless -%}
+    {%- if has_button -%}
+      <div class="schar-fc__btn-wrap">
+        <a class="schar-fc__btn" href="{{ button_link }}" {%- if button_link contains 'http' or button_link contains 'mailto:' %} target="_blank" rel="noopener"{% endif -%}>{{ button_label }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} ======== COMING SOON ======== {%- endcomment -%}
+  {%- if show_coming_soon -%}
+    <div class="schar-fc__coming-soon" data-aos="fade-up" data-aos-delay="200">
+      <p class="schar-fc__coming-soon-text">{{ coming_soon_text }}</p>
+    </div>
+
+  {%- comment -%} ======== MODO CARRUSEL ======== {%- endcomment -%}
+  {%- elsif use_carousel -%}
+    <div class="schar-fc__stage" data-aos="fade-up" data-aos-delay="200">
+
+      {%- if show_arrows -%}
+        <button class="schar-fc__arrow schar-fc__arrow--prev" id="schar-prev-{{ section.id }}" type="button" aria-label="Anterior">
+          <svg width="10" height="18" viewBox="0 0 10 18" fill="none"><path d="M9 1L1 9L9 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="schar-fc__arrow schar-fc__arrow--next" id="schar-next-{{ section.id }}" type="button" aria-label="Siguiente">
+          <svg width="10" height="18" viewBox="0 0 10 18" fill="none"><path d="M1 1L9 9L1 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      {%- endif -%}
+
+      <div class="schar-fc__carousel-wrap">
+        <div class="swiper" id="schar-swiper-{{ section.id }}">
+          <div class="swiper-wrapper">
+            {%- for product in collection.products limit: max_products -%}
+              <div class="swiper-slide schar-fc__slide">
+                {%- render 'product-card', product: product -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+
+      {%- if show_dots -%}
+        <div class="schar-fc__dots" id="schar-dots-{{ section.id }}"></div>
+      {%- endif -%}
+
+    </div>
+
+  {%- comment -%} ======== MODO GRILLA ESTÁTICA ======== {%- endcomment -%}
+  {%- else -%}
+    <div class="schar-fc__grid" data-aos="fade-up" data-aos-delay="200">
+      {%- for product in collection.products limit: max_products -%}
+        <div class="schar-fc__grid-item">
+          {%- render 'product-card', product: product -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+</section>
+
+{%- comment -%} ======== SWIPER INIT ======== {%- endcomment -%}
+{%- if use_carousel and show_coming_soon == false -%}
+<script>
+(function(){
+  var sid = '{{ section.id }}';
+  var cfg = {
+    total: {{ collection_size | default: 6 }},
+    desktop: {{ slides_desktop }},
+    tablet: {{ slides_tablet }},
+    mobile: {{ slides_mobile }},
+    gap: {{ slides_gap }},
+    loop: {% if enable_loop %}true{% else %}false{% endif %},
+    arrows: {% if show_arrows %}true{% else %}false{% endif %},
+    dots: {% if show_dots %}true{% else %}false{% endif %}
+  };
+
+  var attempts = 0;
+
+  function init() {
+    attempts++;
+    if (typeof Swiper === 'undefined') {
+      if (attempts < 50) return setTimeout(init, 200);
+      console.warn('Swiper no se cargó');
+      return;
+    }
+
+    var el = document.getElementById('schar-swiper-' + sid);
+    if (!el) return;
+
+    /* Destruir instancia previa si existe */
+    if (el.swiper) el.swiper.destroy(true, true);
+
+    var prevBtn = document.getElementById('schar-prev-' + sid);
+    var nextBtn = document.getElementById('schar-next-' + sid);
+    var dotsEl = document.getElementById('schar-dots-' + sid);
+
+    /* Loop solo si hay más productos que el mayor slidesPerView */
+    var canLoop = cfg.loop && cfg.total > cfg.desktop;
+
+    var swiper = new Swiper(el, {
+      slidesPerView: cfg.mobile,
+      spaceBetween: cfg.gap,
+      loop: canLoop,
+      grabCursor: true,
+      watchOverflow: true,
+      navigation: (cfg.arrows && prevBtn && nextBtn) ? {
+        prevEl: prevBtn,
+        nextEl: nextBtn
+      } : false,
+      pagination: (cfg.dots && dotsEl) ? {
+        el: dotsEl,
+        clickable: true,
+        bulletClass: 'schar-fc__dot',
+        bulletActiveClass: 'schar-fc__dot--active'
+      } : false,
+      breakpoints: {
+        681: {
+          slidesPerView: cfg.tablet,
+          spaceBetween: cfg.gap
+        },
+        835: {
+          slidesPerView: cfg.desktop,
+          spaceBetween: cfg.gap
+        }
+      },
+      on: {
+        init: function(s) { toggleNav(s); },
+        resize: function(s) { toggleNav(s); },
+        breakpoint: function(s) { toggleNav(s); }
+      }
+    });
+
+    function toggleNav(s) {
+      var perView = s.params.slidesPerView;
+      var enough = cfg.total > perView;
+      if (prevBtn) prevBtn.style.display = enough ? '' : 'none';
+      if (nextBtn) nextBtn.style.display = enough ? '' : 'none';
+      if (dotsEl) dotsEl.style.display = enough ? '' : 'none';
+    }
+  }
+
+  if (document.readyState === 'complete') {
+    setTimeout(init, 100);
+  } else {
+    window.addEventListener('load', function() { setTimeout(init, 100); });
+  }
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Carrusel de Productos",
+  "tag": "section",
+  "class": "schar-fc-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "── COLECCIÓN ──"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Colección"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Máximo de productos",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 10,
+      "info": "Límite de productos a mostrar."
+    },
+    {
+      "type": "text",
+      "id": "coming_soon_text",
+      "label": "Texto 'Próximamente'",
+      "default": "Próximamente...",
+      "info": "Se muestra cuando no hay productos en la colección."
+    },
+    {
+      "type": "header",
+      "content": "── MODO DE VISTA ──"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_carousel",
+      "label": "Usar carrusel",
+      "default": true,
+      "info": "Desactivar para mostrar como grilla estática."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_loop",
+      "label": "Carrusel infinito (loop)",
+      "default": true,
+      "info": "Solo funciona si hay más productos que los visibles."
+    },
+    {
+      "type": "header",
+      "content": "── CONTENIDO ──"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtítulo"
+    },
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Título",
+      "default": "<p>conoce nuestra<br><strong>variedad</strong></p>"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Texto descriptivo"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texto del botón"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Enlace del botón"
+    },
+    {
+      "type": "header",
+      "content": "── LAYOUT ──"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alineación del texto",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "carousel_margin_top",
+      "label": "Espacio título → productos (px)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── PRODUCTOS POR FILA ──"
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_desktop",
+      "label": "Desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "info": "Navegación se oculta si no hay suficientes productos."
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_tablet",
+      "label": "Tablet",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_mobile",
+      "label": "Mobile",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "slides_gap",
+      "label": "Espacio entre productos (px)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── FONDO Y ESPACIADO ──"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#E8DDD0"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding superior (px)",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding inferior (px)",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── TÍTULO ──"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Etiqueta HTML (SEO)",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Tamaño desktop (px)",
+      "min": 24,
+      "max": 120,
+      "step": 2,
+      "default": 56,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Tamaño mobile (px)",
+      "min": 20,
+      "max": 72,
+      "step": 2,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "label": "Line-height (%)",
+      "min": 80,
+      "max": 160,
+      "step": 5,
+      "default": 110,
+      "unit": "%"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom",
+      "label": "Margen inferior (px)",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── SUBTÍTULO ──"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_desktop",
+      "label": "Tamaño desktop (px)",
+      "min": 10,
+      "max": 30,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_mobile",
+      "label": "Tamaño mobile (px)",
+      "min": 9,
+      "max": 24,
+      "step": 1,
+      "default": 11,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Color",
+      "default": "#C41E3A"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_margin_bottom",
+      "label": "Margen inferior (px)",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── TEXTO ──"
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Tamaño desktop (px)",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Tamaño mobile (px)",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "range",
+      "id": "text_margin_top",
+      "label": "Margen superior (px)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── FLECHAS ──"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Mostrar flechas",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "arrow_size",
+      "label": "Tamaño (px)",
+      "min": 28,
+      "max": 60,
+      "step": 2,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "arrow_bg_color",
+      "label": "Fondo",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "color",
+      "id": "arrow_icon_color",
+      "label": "Ícono",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "arrow_bg_hover",
+      "label": "Fondo hover",
+      "default": "#C41E3A"
+    },
+    {
+      "type": "header",
+      "content": "── DOTS ──"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "Mostrar dots",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Color inactivo",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "color",
+      "id": "dot_active_color",
+      "label": "Color activo",
+      "default": "#C41E3A"
+    },
+    {
+      "type": "header",
+      "content": "── BOTÓN ──"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Fondo",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Texto",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_hover",
+      "label": "Fondo hover",
+      "default": "#C41E3A"
+    },
+    {
+      "type": "color",
+      "id": "button_text_hover",
+      "label": "Texto hover",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Border radius (px)",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_height",
+      "label": "Altura (px)",
+      "min": 32,
+      "max": 72,
+      "step": 2,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_padding_x",
+      "label": "Padding horizontal (px)",
+      "min": 12,
+      "max": 60,
+      "step": 2,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_size_desktop",
+      "label": "Tamaño texto desktop (px)",
+      "min": 10,
+      "max": 22,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_size_mobile",
+      "label": "Tamaño texto mobile (px)",
+      "min": 9,
+      "max": 18,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_margin_top",
+      "label": "Margen superior (px)",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "default": 32,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Carrusel de Productos",
+      "category": "Homepage"
+    }
+  ]
+}
+{% endschema %}
+
+{% style %}
+  @font-face {
+    font-family: 'Times ExtraBold';
+    src: url('https://cdn.shopify.com/s/files/1/0991/5082/3710/files/Times-ExtraBold.otf?v=1777160115') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  #shopify-section-{{ section.id }} {
+    --schar-font-heading: 'Times ExtraBold', 'Playfair Display', serif;
+    --schar-font-body: 'Inter', 'Poppins', sans-serif;
+
+    --fc-bg: {{ bg_color }};
+    --fc-pt: {{ padding_top }}px;
+    --fc-pb: {{ padding_bottom }}px;
+    --fc-carousel-mt: {{ carousel_margin_top }}px;
+    --fc-gap: {{ slides_gap }}px;
+    --fc-arrow-size: {{ arrow_size }}px;
+    --fc-cols-desktop: {{ slides_desktop }};
+    --fc-cols-tablet: {{ slides_tablet }};
+    --fc-cols-mobile: {{ slides_mobile }};
+
+    --fc-h-desktop: {{ heading_size_desktop }}px;
+    --fc-h-mobile: {{ heading_size_mobile }}px;
+    --fc-h-color: {{ heading_color }};
+    --fc-h-lh: {{ heading_line_height }}%;
+    --fc-h-mb: {{ heading_margin_bottom }}px;
+    --fc-sh-desktop: {{ subtitle_size_desktop }}px;
+    --fc-sh-mobile: {{ subtitle_size_mobile }}px;
+    --fc-sh-color: {{ subtitle_color }};
+    --fc-sh-mb: {{ subtitle_margin_bottom }}px;
+    --fc-t-desktop: {{ text_size_desktop }}px;
+    --fc-t-mobile: {{ text_size_mobile }}px;
+    --fc-t-color: {{ text_color }};
+    --fc-t-mt: {{ text_margin_top }}px;
+
+    --fc-arrow-bg: {{ arrow_bg }};
+    --fc-arrow-icon: {{ arrow_icon }};
+    --fc-arrow-bg-hover: {{ arrow_bg_hover }};
+    --fc-dot-color: {{ dot_color }};
+    --fc-dot-active: {{ dot_active_color }};
+
+    --fc-btn-bg: {{ btn_bg }};
+    --fc-btn-text: {{ btn_text }};
+    --fc-btn-bg-hover: {{ btn_bg_hover }};
+    --fc-btn-text-hover: {{ btn_text_hover }};
+    --fc-btn-radius: {{ btn_radius }}px;
+    --fc-btn-height: {{ btn_height }}px;
+    --fc-btn-px: {{ btn_padding_x }}px;
+    --fc-btn-desktop: {{ btn_size_desktop }}px;
+    --fc-btn-mobile: {{ btn_size_mobile }}px;
+    --fc-btn-mt: {{ button_margin_top }}px;
+  }
+
+  /* BASE */
+  .schar-fc {
+    background-color: var(--fc-bg) !important;
+    padding: var(--fc-pt) 0 var(--fc-pb);
+  }
+
+  /* INFO */
+  .schar-fc__info {
+    max-width: 800px;
+    padding: 0 var(--header-desktop-padding, 63px);
+    margin: 0 auto;
+  }
+
+  .schar-fc__subtitle {
+    font-family: var(--schar-font-body);
+    font-size: clamp(var(--fc-sh-mobile), calc(var(--fc-sh-mobile) + ({{ subtitle_size_desktop }} - {{ subtitle_size_mobile }}) * ((100vw - 375px) / (1440 - 375))), var(--fc-sh-desktop));
+    font-weight: 600; letter-spacing: 0.15em; text-transform: lowercase;
+    color: var(--fc-sh-color); margin: 0 0 var(--fc-sh-mb) 0;
+  }
+
+  .schar-fc__heading, .schar-fc__heading * {
+    font-family: var(--schar-font-heading) !important;
+    font-style: normal; font-weight: 400 !important;
+    color: var(--fc-h-color);
+    font-size: clamp(var(--fc-h-mobile), calc(var(--fc-h-mobile) + ({{ heading_size_desktop }} - {{ heading_size_mobile }}) * ((100vw - 375px) / (1440 - 375))), var(--fc-h-desktop));
+    line-height: var(--fc-h-lh); margin: 0 0 var(--fc-h-mb) 0;
+  }
+
+  .schar-fc__heading strong, .schar-fc__heading b,
+  .schar-fc__heading strong *, .schar-fc__heading b * {
+    font-weight: 400 !important; color: var(--fc-sh-color);
+  }
+
+  .schar-fc__text, .schar-fc__text * {
+    font-family: var(--schar-font-body);
+    font-size: clamp(var(--fc-t-mobile), calc(var(--fc-t-mobile) + ({{ text_size_desktop }} - {{ text_size_mobile }}) * ((100vw - 375px) / (1440 - 375))), var(--fc-t-desktop));
+    line-height: 1.6; color: var(--fc-t-color);
+  }
+  .schar-fc__text:not(:first-child) { margin-top: var(--fc-t-mt); }
+
+  /* ======== STAGE (carrusel) ======== */
+  .schar-fc__stage {
+    position: relative;
+    margin-top: var(--fc-carousel-mt);
+    padding: 0 calc(var(--fc-arrow-size) + 16px);
+    max-width: 1314px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .schar-fc__carousel-wrap {
+    overflow: hidden;
+    width: 100%;
+  }
+
+  /* Asegurar que Swiper renderice correctamente */
+  .schar-fc__carousel-wrap .swiper {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .schar-fc__carousel-wrap .swiper-wrapper {
+    display: flex;
+    width: 100%;
+  }
+
+  .schar-fc__carousel-wrap .swiper-slide {
+    flex-shrink: 0;
+    width: auto;
+    height: auto;
+  }
+
+  .schar-fc__slide { height: auto; }
+
+  /* FLECHAS */
+  .schar-fc__arrow {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    z-index: 3;
+    display: flex; align-items: center; justify-content: center;
+    width: var(--fc-arrow-size); height: var(--fc-arrow-size);
+    background-color: var(--fc-arrow-bg);
+    border: none; border-radius: 50%;
+    color: var(--fc-arrow-icon);
+    cursor: pointer; padding: 0;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+  }
+  .schar-fc__arrow svg {
+    width: calc(var(--fc-arrow-size) * 0.25); height: auto;
+    pointer-events: none;
+  }
+  .schar-fc__arrow--prev { left: 0; }
+  .schar-fc__arrow--next { right: 0; }
+  .schar-fc__arrow:hover { background-color: var(--fc-arrow-bg-hover); }
+  .schar-fc__arrow.swiper-button-disabled {
+    opacity: 0.25; cursor: default; pointer-events: none;
+  }
+  .schar-fc__arrow.swiper-button-lock { display: none; }
+
+  /* DOTS */
+  .schar-fc__dots {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; margin-top: 28px; flex-wrap: wrap;
+  }
+  .schar-fc__dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background-color: var(--fc-dot-color); opacity: 0.25;
+    border: none; cursor: pointer; display: inline-block;
+    transition: opacity 0.3s ease, background-color 0.3s ease;
+  }
+  .schar-fc__dot--active {
+    opacity: 1; background-color: var(--fc-dot-active);
+  }
+
+  /* ======== GRILLA ESTÁTICA ======== */
+  .schar-fc__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--fc-cols-desktop), 1fr);
+    gap: var(--fc-gap);
+    margin-top: var(--fc-carousel-mt);
+    padding: 0 var(--header-desktop-padding, 63px);
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .schar-fc__grid-item { min-width: 0; }
+
+  /* BOTÓN */
+  .schar-fc__btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: var(--fc-btn-height); padding: 0 var(--fc-btn-px);
+    background-color: var(--fc-btn-bg); color: var(--fc-btn-text);
+    border: none; border-radius: var(--fc-btn-radius);
+    font-family: var(--schar-font-body);
+    font-size: clamp(var(--fc-btn-mobile), calc(var(--fc-btn-mobile) + ({{ btn_size_desktop }} - {{ btn_size_mobile }}) * ((100vw - 375px) / (1440 - 375))), var(--fc-btn-desktop));
+    font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    text-decoration: none; cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  }
+  .schar-fc__btn-wrap { margin-top: var(--fc-btn-mt); }
+  .schar-fc__btn:hover {
+    background-color: var(--fc-btn-bg-hover); color: var(--fc-btn-text-hover);
+    transform: translateY(-1px);
+  }
+  .schar-fc__btn:active { transform: translateY(0); }
+
+  /* RESPONSIVE */
+  @media (max-width: 1439px) {
+    .schar-fc__info { padding: 0 var(--header-laptop-padding, 46px); }
+    .schar-fc__grid { padding: 0 var(--header-laptop-padding, 46px); }
+  }
+  @media (max-width: 834px) {
+    .schar-fc__info { padding: 0 var(--header-tablet-padding, 46px); }
+    .schar-fc__grid {
+      padding: 0 var(--header-tablet-padding, 46px);
+      grid-template-columns: repeat(var(--fc-cols-tablet), 1fr);
+    }
+    .schar-fc__stage { padding: 0 calc(var(--fc-arrow-size) + 12px); }
+  }
+  @media (max-width: 680px) {
+    .schar-fc__info { padding: 0 var(--header-mobile-padding, 22px); }
+    .schar-fc__grid {
+      padding: 0 var(--header-mobile-padding, 22px);
+      grid-template-columns: repeat(var(--fc-cols-mobile), 1fr);
+    }
+    .schar-fc__stage { padding: 0 calc(var(--fc-arrow-size) + 8px); }
+    .schar-fc__arrow { --fc-arrow-size: 32px; }
+    .schar-fc__dots { margin-top: 20px; }
+  }
+  @media (hover: hover) {
+    .schar-fc__btn:hover { background-color: var(--fc-btn-bg-hover); color: var(--fc-btn-text-hover); }
+    .schar-fc__arrow:hover { background-color: var(--fc-arrow-bg-hover); }
+  }
+
+  /* COMING SOON */
+  .schar-fc__coming-soon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: var(--fc-carousel-mt);
+    padding: 60px var(--header-desktop-padding, 63px);
+    max-width: 1314px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .schar-fc__coming-soon-text {
+    font-family: var(--schar-font-heading);
+    font-size: clamp(28px, calc(28px + (48 - 28) * ((100vw - 375px) / (1440 - 375))), 48px);
+    font-weight: 400;
+    color: var(--fc-h-color);
+    opacity: 0.4;
+    text-align: center;
+    margin: 0;
+    letter-spacing: 0.02em;
+  }
+
+  @media (max-width: 680px) {
+    .schar-fc__coming-soon {
+      padding: 40px var(--header-mobile-padding, 22px);
+    }
+  }
+
+  /* PLACEHOLDERS */
+  .schar-fc__ph-card { display: flex; flex-direction: column; align-items: center; width: 100%; }
+  .schar-fc__ph-img { width: 100%; }
+  .schar-fc__ph-img svg { width: 100%; height: auto; display: block; }
+  .schar-fc__ph-info { width: 100%; padding: 16px 8px 0; text-align: center; }
+  .schar-fc__ph-type { font-family: var(--schar-font-body); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: lowercase; color: var(--fc-sh-color); margin: 0 0 4px 0; }
+  .schar-fc__ph-name { font-family: var(--schar-font-heading); font-size: 18px; font-weight: 400; color: var(--fc-h-color); margin: 0 0 8px 0; line-height: 1.3; }
+  .schar-fc__ph-price { font-family: var(--schar-font-body); font-size: 15px; font-weight: 600; color: var(--fc-t-color); margin: 0; }
+{% endstyle %}

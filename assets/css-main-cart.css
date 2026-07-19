@@ -1,0 +1,71 @@
+.cart-form{margin-top:calc(clamp(6px, calc(6px + (10 - 6) * ((100vw - 1024px) / (1440 - 1024))), 10px) * -1);}.cart-header-label-text{font-family:var(--primary-font-bold);font-size:clamp(14px,calc(14px + (15 - 14) * ((100vw - 1024px) / (1440 - 1024))),15px);}.cart-item-title{font-family:var(--primary-font-bold);font-size:clamp(15px,calc(15px + (17 - 15) * ((100vw - 1024px) / (1440 - 1024))),17px);}.cart-item-variant-label,.cart-item-variant-value{font-size:clamp(13px,calc(13px + (15 - 13) * ((100vw - 1024px) / (1440 - 1024))),15px);color:var(--primary-color);}.cart-number{font-size:clamp(14px,calc(14px + (15 - 14) * ((100vw - 1024px) / (1440 - 1024))),15px);}.cart-item-info-quantity-input,.cart-item-quantity-input{background-color:var(--white);}.button-cart-remove{font-family:var(--primary-font-bold);font-size:11px;}.cart-subtotal-title{font-family:var(--primary-font-bold);font-size:15px;}.cart-continue-button{font-family:var(--primary-font-bold);font-size:13px;text-transform:uppercase;text-decoration:underline;}.cart-continue-button:active{color:var(--tertiary-color);}@media (hover:hover){.cart-continue-button:hover{color:var(--tertiary-color);}}
+/* =============================================
+   DR. SCHÄR – Cart Overrides
+   Pegar al FINAL del CSS del carrito
+   ============================================= */
+ 
+.cart-header-label-text {
+  font-family: 'Cabin', 'Inter', sans-serif;
+  font-weight: 700;
+  color: #2C1A0E;
+}
+ 
+.cart-item-title {
+  font-family: 'Cabin', 'Inter', sans-serif;
+  font-weight: 700;
+  color: #2C1A0E;
+}
+ 
+.cart-item-variant-label,
+.cart-item-variant-value {
+  font-family: 'Cabin', 'Inter', sans-serif;
+  color: #2C1A0E;
+}
+ 
+.cart-number {
+  font-family: 'Cabin', 'Inter', sans-serif;
+  color: #2C1A0E;
+}
+ 
+.cart-item-info-quantity-input,
+.cart-item-quantity-input {
+  font-family: 'Cabin', 'Inter', sans-serif;
+  color: #2C1A0E;
+  border-color: #D5CBC0;
+}
+ 
+.button-cart-remove {
+  font-family: 'Cabin', 'Inter', sans-serif;
+  font-weight: 600;
+  color: #2C1A0E;
+}
+ 
+.button-cart-remove:hover {
+  color: #C41E3A;
+}
+ 
+.cart-subtotal-title {
+  font-family: 'Cabin', 'Inter', sans-serif;
+  font-weight: 700;
+  color: #2C1A0E;
+}
+ 
+.cart-continue-button {
+  font-family: 'Cabin', 'Inter', sans-serif;
+  font-weight: 600;
+  color: #2C1A0E;
+}
+ 
+.cart-continue-button:active {
+  color: #C41E3A;
+}
+ 
+@media (hover: hover) {
+  .cart-continue-button:hover {
+    color: #C41E3A;
+  }
+ 
+  .button-cart-remove:hover {
+    color: #C41E3A;
+  }
+}

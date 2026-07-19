@@ -1,0 +1,122 @@
+{%- liquid 
+  assign title_1 = section.settings.title_1
+  assign title_2 = section.settings.title_2
+  assign row_1_title = section.settings.row_1_title
+  assign row_2_title = section.settings.row_2_title
+  assign blocks_size = section.blocks | size
+-%}
+
+{{- 'css-page-about-us-icons-blocks.css' | asset_url | stylesheet_tag -}}
+
+<div class="pau-ib section">
+  <div class="pau-ib-content section-content">
+    {%- if title_1 != blank or title_2 != blank -%}
+      <header>
+        {%- unless title_1 == blank -%}
+          <p class="pau-ib-title-1 title-1">{{- title_1 -}}</p>
+        {%- endunless -%}
+        {%- unless title_2 == blank -%}
+          <h2 class="pau-ib-title section-title-richtext color-green">{{- title_2 -}}</h2>
+        {%- endunless -%}
+      </header>
+    {%- endif -%}
+    {%- if blocks_size > 0 -%}
+      <div class="pau-ib-block block-1">
+        {%- unless row_1_title == blank -%}
+          <h3 class="pau-ib-block-title">{{- row_1_title -}}</h3>
+        {%- endunless -%}
+
+          <div class="pau-ib-items">
+            {%- for block in section.blocks limit: 4 -%}
+              {%- render 'page-about-us-icon-block', block: block -%}
+            {%- endfor -%}
+          </div>
+        </div>
+      <a href="{{ block.settings.url }}">
+        {%- if row_2_title != blank or blocks_size > 4 -%}
+          <div class="pau-ib-block block-2">
+            {%- unless row_2_title == blank -%}
+              <h3 class="pau-ib-block-title">{{- row_2_title -}}</h3>
+            {%- endunless -%}
+            <div class="pau-ib-items">
+              {%- for block in section.blocks offset: 4 -%}
+                {%- render 'page-about-us-icon-block', block: block -%}
+              {%- endfor -%}
+            </div>
+          </div>
+      </a>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{%- schema %}
+  {
+    "name": "Bloques de íconos",
+    "tag": "section",
+    "class": "pau-ib-section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Encabezado"
+      },
+      {
+        "type": "text",
+        "id": "title_1",
+        "label": "Título 1"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "title_2",
+        "label": "Título 2"
+      },
+      {
+        "type": "header",
+        "content": "Fila 1"
+      },
+      {
+        "type": "text",
+        "id": "row_1_title",
+        "label": "Título"
+      },
+      {
+        "type": "header",
+        "content": "Fila 2"
+      },
+      {
+        "type": "text",
+        "id": "row_2_title",
+        "label": "Título"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "limit": 8,
+        "name": "Ícono con texto",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "icon",
+            "label": "Ícono"
+          },
+          {
+            "type": "text",
+            "id": "text",
+            "label": "Texto"
+          },
+          {
+            "type": "url",
+            "id": "url",
+            "label": "URL"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Nosotros - Bloques de íconos"
+      }
+    ]
+  }
+{% endschema -%}

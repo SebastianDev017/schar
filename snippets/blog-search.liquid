@@ -1,0 +1,60 @@
+<div class="blog-search">
+  <div class="search-bar blog-search-bar" id="search-bar">
+    <input class="search-bar-box blog-search-bar-box" placeholder="Busca por palabra clave o texto" type="text" name="q" id="search-bar-input">
+    <button class="button search-bar-button">
+      <span class="search-button-text">Buscar</span>
+      {%- render 'icon', icon: 'search' -%}
+    </button>
+  </div>
+  <div class="hue-blog-filter-anchor"></div>
+</div>
+
+
+
+<!-- blog-filter-start -->
+<style>
+  .blog-filter-app {
+  border: 0px;
+  }
+    .blog-filter-skeleton-box {
+    display: inline-block;
+    height: 1em;
+    position: relative;
+    overflow: hidden;
+    background-color: #f1f1f1;
+  }
+    .blog-filter-skeleton-box::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.2) 40%, rgba(255, 255, 255, 0.5) 90%, rgba(255, 255, 255, 0));
+    -webkit-animation: shimmer 2s infinite;
+    animation: shimmer 2s infinite;
+    content: "";
+  }
+    @-webkit-keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+  }
+    @keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+  }
+    @media only screen and (max-width: 700px) {
+    .blog-filter-app {
+    display: block;
+    width: 100%;
+  }
+  }
+    @media only screen and (max-width: 430px) {
+    .blog-filter-reset {
+    width: 100%;
+  }
+  }
+</style>
+<!-- blog-filter-end -->

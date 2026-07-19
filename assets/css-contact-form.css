@@ -1,0 +1,83 @@
+body:not(.page-type-contact) .contact-form-section{padding:50px 0;}.form.contact-form{width:calc(100% - 300px);max-width:740px;margin-top:-3px;}@media (max-width:1024px){.form.contact-form{width:calc(100% - 100px * 2);max-width:724px;}}@media (max-width:834px){.form.contact-form{width:calc(100% - 20px * 2);max-width:634px;}}
+/* =============================================
+   DR. SCHÄR – Contact Page Overrides
+   Pegar al FINAL de css-contact-form.css
+   ============================================= */
+ 
+/* ── Labels ── */
+.contact-form .form-label {
+  font-family: 'Cabin', 'Inter', sans-serif;
+  font-weight: 600;
+  color: #2C1A0E;
+}
+ 
+/* ── Inputs ── */
+.contact-form .form-input {
+  font-family: 'Cabin', 'Inter', sans-serif;
+  color: #2C1A0E;
+  border: 1px solid #D5CBC0;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  transition: border-color 0.2s ease;
+}
+ 
+.contact-form .form-input:focus {
+  border-color: #2C1A0E;
+}
+ 
+.contact-form .form-input::placeholder {
+  color: #B8AA9C;
+}
+ 
+/* ── Textarea ── */
+.contact-form textarea.form-input {
+  border-radius: 8px;
+}
+ 
+/* ── Submit button ── */
+.contact-form .button {
+  background-color: #2C1A0E !important;
+  color: #FFFFFF !important;
+  border-radius: 50px !important;
+  font-family: 'Cabin', 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+ 
+.contact-form .button:hover {
+  background-color: #C41E3A !important;
+}
+ 
+/* ── Success message ── */
+.contact-form .success-message {
+  background-color: #F5F0EB;
+  border-color: #2ABCB4;
+  color: #2C1A0E;
+  font-family: 'Cabin', 'Inter', sans-serif;
+  border-radius: 8px;
+}
+ 
+/* ── Error message ── */
+.contact-form .contact__field-error .form__message {
+  font-family: 'Cabin', 'Inter', sans-serif;
+}
+ 
+/* ── Page title ── */
+.contact-page .page-title,
+.page-type-contact .page-title {
+  font-family: 'Times ExtraBold', 'Playfair Display', serif !important;
+  color: #2C1A0E !important;
+}
+ 
+/* ── Hover ── */
+@media (hover: hover) {
+  .contact-form .button:hover {
+    background-color: #C41E3A !important;
+  }
+ 
+  .contact-form .form-input:hover {
+    border-color: #2C1A0E;
+  }
+}

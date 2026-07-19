@@ -1,0 +1,156 @@
+{%- liquid 
+  assign title_1 = section.settings.title_1
+  assign title = section.settings.title
+  assign text = section.settings.text
+-%}
+
+{{- "css-page-about-us-cards-with-icons.css" | asset_url | stylesheet_tag -}}
+<script defer src="{{- 'js-page-about-us-cards-with-icons.js' | asset_url -}}"></script>
+
+<div class="pau-cwi-container" data-section-id="{{- section.id -}}" data-section-type="pau-cards-with-icons">
+
+  <div class="pau-cwi-content">
+
+    {%- if title != blank or text != blank -%}
+      <div class="pau-cwi-header">
+        <header class="pau-cwi-header-title-wrapper">
+          {%- if title != blank or title_1 != blank -%}
+            {%- if title_1 != blank %}
+              <p class="pau-cwi-title-1 title-1">{{ title_1 }}</p>
+            {% endif -%}
+            {% if title != blank %}
+              <h2 class="pau-cwi-header-title section-title-richtext">{{ title }}</h2>
+            {% endif %}
+          {%- endif -%}
+        </header>
+
+        {%- if text != blank -%}
+          <div class="pau-cwi-header-text-wrapper">
+            <p class="pau-cwi-header-text">{{ text }}</p>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="pau-cwi-items">
+
+    {%- for block in section.blocks -%}
+
+        {%- liquid 
+          assign card_logo = block.settings.card_logo
+          assign card_title = block.settings.card_title
+        -%}
+      
+      {%- if block.settings.card_url != blank -%}
+          <a href="{{ block.settings.card_url }}" target="_blank" style="display:flex;align-items:center;flex-direction:column;width:calc(var(--total-percent-item-width) / var(--columns));"> 
+        <div class="pau-cwi-item">
+
+          <div class="pau-cwi-item-image-wrapper back-img-wrapper">
+            {%- if card_logo != blank -%}
+              <picture class="picture-wrapper">
+                <img class="back-img pau-cwi-item-image" alt="{{ card_logo.alt }}" loading="lazy" src="{{ card_logo | image_url: width: 800 }}">
+              </picture>
+            {%- endif -%}
+          </div>
+
+          {%- if card_title != blank -%}
+            <div class="pau-cwi-item-title-wrapper">
+              <h3 class="pau-cwi-item-title" style="text-decoration:underline;">{{ card_title }}</h3>
+            </div>
+          {%- endif -%}
+
+        </div>
+          </a>
+      {%- else -%}
+
+        <div class="pau-cwi-item">
+          <div class="pau-cwi-item-image-wrapper back-img-wrapper">
+            {%- if card_logo != blank -%}
+              <picture class="picture-wrapper">
+                <img class="back-img pau-cwi-item-image" alt="{{ card_logo.alt }}" loading="lazy" src="{{ card_logo | image_url: width: 800 }}">
+              </picture>
+            {%- endif -%}
+          </div>
+
+          {%- if card_title != blank -%}
+            <div class="pau-cwi-item-title-wrapper">
+              <h3 class="pau-cwi-item-title">{{ card_title }}</h3>
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+       
+    {%- endfor -%}
+
+    </div>
+
+  </div>
+
+</div>
+
+{%- schema -%}
+  {
+    "name": "Nosotros - T/Íconos",
+    "tag": "section",
+    "class": "pau-cwi",
+    "max_blocks": 12,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "text",
+        "id": "title_1",
+        "label": "Título 1"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Título"
+      },
+      {
+        "type": "text",
+        "id": "text",
+        "label": "Texto"
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Tarjeta",
+        "type": "card",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Logo"
+          },
+          {
+            "type": "image_picker",
+            "id": "card_logo",
+            "label": "Logo"
+          },
+          {
+            "type": "header",
+            "content": "Contenido"
+          },
+          {
+            "type": "text",
+            "id": "card_title",
+            "label": "Título"
+          },
+          {
+            "type": "url",
+            "label": "URL de la casilla",
+            "id": "card_url"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Nosotros - T/Iconos",
+        "category": "About us"
+      }
+    ]
+  }
+{% endschema %}

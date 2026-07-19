@@ -1,0 +1,479 @@
+{%- comment -%}
+  ============================================================
+  COMING SOON – Dr. Schär México
+  ✔ Full screen: 100vh × 100vw
+  ✔ Imagen de fondo (la sube el cliente)
+  ✔ Título en 2 líneas (Times ExtraBold)
+  ✔ Formulario Klaviyo embebido por ID
+  ============================================================
+{%- endcomment -%}
+
+{%- liquid
+  assign bg_image = section.settings.bg_image
+  assign overlay_opacity = section.settings.overlay_opacity | default: 30
+  assign title_line1 = section.settings.title_line1
+  assign title_line2 = section.settings.title_line2
+  assign klaviyo_id = section.settings.klaviyo_form_id
+  assign content_align = section.settings.content_align | default: 'center'
+-%}
+
+{%- comment -%} Google Tag Manager — necesario en la página /password {%- endcomment -%}
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-K6VN7DKL');</script>
+<!-- End Google Tag Manager -->
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K6VN7DKL"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<section class="schar-coming" id="schar-coming-{{ section.id }}" style="text-align: {{ content_align }};">
+
+  {%- comment -%} FONDO {%- endcomment -%}
+  <div class="schar-coming__bg">
+    {%- if bg_image != blank -%}
+      <img
+        class="schar-coming__bg-img"
+        src="{{ bg_image | image_url: width: 2000 }}"
+        srcset="{{ bg_image | image_url: width: 800 }} 800w,
+                {{ bg_image | image_url: width: 1200 }} 1200w,
+                {{ bg_image | image_url: width: 1600 }} 1600w,
+                {{ bg_image | image_url: width: 2000 }} 2000w"
+        sizes="100vw"
+        alt="{{ bg_image.alt | escape | default: shop.name }}"
+        fetchpriority="high"
+      >
+    {%- else -%}
+      <div class="schar-coming__bg-fallback"></div>
+    {%- endif -%}
+    <div class="schar-coming__overlay" style="opacity: {{ overlay_opacity | divided_by: 100.0 | plus: 0.55 }};"></div>
+  </div>
+
+  {%- comment -%} LOGO – arriba, centrado {%- endcomment -%}
+  {%- if section.settings.logo != blank -%}
+    <div class="schar-coming__logo">
+      <img src="{{ section.settings.logo | image_url: width: 400 }}" alt="{{ shop.name }}" loading="eager">
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} CONTENIDO {%- endcomment -%}
+  <div class="schar-coming__inner">
+    <div class="schar-coming__content">
+
+      {%- if title_line1 != blank or title_line2 != blank -%}
+        <h1 class="schar-coming__title">
+          {%- if title_line1 != blank -%}
+            <span class="schar-coming__title-1">{{ title_line1 }}</span>
+          {%- endif -%}
+          {%- if title_line2 != blank -%}
+            <span class="schar-coming__title-2">{{ title_line2 }}</span>
+          {%- endif -%}
+        </h1>
+      {%- endif -%}
+
+      {%- if section.settings.subtitle != blank -%}
+        <p class="schar-coming__subtitle">{{ section.settings.subtitle }}</p>
+      {%- endif -%}
+
+      {%- comment -%} FORMULARIO KLAVIYO {%- endcomment -%}
+      {%- if klaviyo_id != blank -%}
+        <div class="schar-coming__form">
+          <div class="klaviyo-form-{{ klaviyo_id }}"></div>
+        </div>
+      {%- else -%}
+        {%- if request.design_mode -%}
+          <div class="schar-coming__form-placeholder">
+            Agrega el ID del formulario de Klaviyo en la configuración de la sección.
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+
+    </div>
+  </div>
+
+</section>
+
+{%- comment -%} Cargar el script de Klaviyo si hay form {%- endcomment -%}
+{%- if klaviyo_id != blank and section.settings.klaviyo_company_id != blank -%}
+  <script async src="https://static.klaviyo.com/onsite/js/klaviyo.js?company_id={{ section.settings.klaviyo_company_id }}"></script>
+{%- endif -%}
+
+{% style %}
+  /* =============================================
+     COMING SOON – Dr. Schär
+     ============================================= */
+  #shopify-section-{{ section.id }} {
+    --sc-dark: #2C1A0E;
+    --sc-red: #C41E3A;
+    --sc-yellow: #F5C842;
+    --sc-white: #FFFFFF;
+    --sc-font-heading: 'Times ExtraBold', 'Playfair Display', serif;
+    --sc-font-body: 'Cabin', 'Inter', sans-serif;
+
+    --sc-t1-mobile: {{ section.settings.title1_size_mobile | default: 24 }}px;
+    --sc-t1-desktop: {{ section.settings.title1_size_desktop | default: 40 }}px;
+    --sc-t2-mobile: {{ section.settings.title2_size_mobile | default: 38 }}px;
+    --sc-t2-desktop: {{ section.settings.title2_size_desktop | default: 68 }}px;
+    --sc-sub-mobile: {{ section.settings.subtitle_size_mobile | default: 15 }}px;
+    --sc-sub-desktop: {{ section.settings.subtitle_size_desktop | default: 19 }}px;
+    --sc-logo-mobile: {{ section.settings.logo_size_mobile | default: 160 }}px;
+    --sc-logo-desktop: {{ section.settings.logo_size_desktop | default: 240 }}px;
+  }
+
+  /* La sección rompe el ancho del tema → 100vw real */
+  #shopify-section-{{ section.id }} {
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    width: 100vw;
+  }
+
+  .schar-coming {
+    position: relative;
+    width: 100vw;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── Fondo ── */
+  .schar-coming__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+  .schar-coming__bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+  .schar-coming__bg-fallback {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(160deg, #E8DDD0 0%, #D5CBC0 100%);
+  }
+  .schar-coming__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(44,26,14,0.82) 0%,
+      rgba(44,26,14,0.55) 42%,
+      rgba(44,26,14,0.20) 70%,
+      rgba(44,26,14,0.05) 100%
+    );
+  }
+
+  /* ── Logo: arriba, centrado, en el flujo (reserva su espacio) ── */
+  .schar-coming__logo {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+    flex-shrink: 0;
+  }
+  .schar-coming__logo img {
+    width: var(--sc-logo-mobile);
+    height: auto;
+    display: block;
+    margin: 0;
+  }
+
+  /* ── Contenido: empujado al fondo ── */
+  .schar-coming__inner {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 32px var(--header-mobile-padding, 22px) clamp(40px, 8vh, 80px);
+  }
+  .schar-coming__content {
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+  /* Alineación del contenido (la sección define text-align) */
+  .schar-coming[style*="left"]  .schar-coming__content { margin: 0 auto 0 0; }
+  .schar-coming[style*="right"] .schar-coming__content { margin: 0 0 0 auto; }
+
+  /* Título */
+  .schar-coming__title {
+    margin: 0 0 24px 0;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.05;
+  }
+  .schar-coming__title-1 {
+    font-family: var(--sc-font-body);
+    font-weight: 700;
+    font-size: var(--sc-t1-mobile);
+    color: var(--sc-white);
+  }
+  .schar-coming__title-2 {
+    font-family: var(--sc-font-heading);
+    font-weight: 400;
+    font-size: var(--sc-t2-mobile);
+    color: var(--sc-white);
+  }
+
+  /* Subtítulo */
+  .schar-coming__subtitle {
+    margin: 0 0 28px 0;
+    font-family: var(--sc-font-body);
+    font-size: var(--sc-sub-mobile);
+    line-height: 1.5;
+    color: rgba(255,255,255,0.9);
+  }
+
+  /* ── Formulario Klaviyo ── */
+  .schar-coming__form {
+    width: 100%;
+  }
+  /* Inputs del form de Klaviyo → pill blanco */
+  .schar-coming__form input[type="text"],
+  .schar-coming__form input[type="email"] {
+    border-radius: 50px !important;
+    border: none !important;
+    background: var(--sc-white) !important;
+    font-family: var(--sc-font-body) !important;
+    color: var(--sc-dark) !important;
+  }
+  .schar-coming__form button[type="submit"] {
+    border-radius: 50px !important;
+    background-color: var(--sc-dark) !important;
+    color: var(--sc-white) !important;
+    font-family: var(--sc-font-body) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+  }
+  .schar-coming__form button[type="submit"]:hover {
+    background-color: var(--sc-red) !important;
+  }
+
+  .schar-coming__form-placeholder {
+    padding: 20px;
+    background: rgba(255,255,255,0.92);
+    border-radius: 12px;
+    font-family: var(--sc-font-body);
+    font-size: 14px;
+    color: var(--sc-dark);
+    text-align: center;
+  }
+
+  /* ── Desktop ── */
+  @media (min-width: 835px) {
+    .schar-coming__inner {
+      padding: 40px var(--header-desktop-padding, 63px) clamp(60px, 9vh, 110px);
+    }
+    .schar-coming__logo img { width: var(--sc-logo-desktop); }
+    .schar-coming__title-1 { font-size: var(--sc-t1-desktop); }
+    .schar-coming__title-2 { font-size: var(--sc-t2-desktop); }
+    .schar-coming__subtitle { font-size: var(--sc-sub-desktop); }
+  }
+
+  @media (hover: hover) {
+    .schar-coming__form button[type="submit"]:hover {
+      background-color: var(--sc-red) !important;
+    }
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Coming Soon",
+  "tag": "section",
+  "class": "schar-coming-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Imagen de fondo"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Imagen de fondo",
+      "info": "Ocupa toda la pantalla (100vh × 100vw)."
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Oscurecer imagen",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "default": 30,
+      "unit": "%",
+      "info": "Mejora la legibilidad del texto."
+    },
+    {
+      "type": "header",
+      "content": "Logo (opcional)"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo",
+      "info": "Se coloca centrado en la parte superior, sin margen."
+    },
+    {
+      "type": "range",
+      "id": "logo_size_mobile",
+      "label": "Tamaño logo — mobile",
+      "min": 80,
+      "max": 280,
+      "step": 10,
+      "default": 160,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "logo_size_desktop",
+      "label": "Tamaño logo — desktop",
+      "min": 120,
+      "max": 420,
+      "step": 10,
+      "default": 240,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Texto"
+    },
+    {
+      "type": "text",
+      "id": "title_line1",
+      "label": "Título — línea 1",
+      "default": "Muy pronto de regreso en"
+    },
+    {
+      "type": "text",
+      "id": "title_line2",
+      "label": "Título — línea 2 (destacado)",
+      "default": "México 2026"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtítulo (opcional)"
+    },
+    {
+      "type": "select",
+      "id": "content_align",
+      "label": "Alineación del contenido",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Tamaño de texto — línea 1"
+    },
+    {
+      "type": "range",
+      "id": "title1_size_mobile",
+      "label": "Mobile",
+      "min": 16,
+      "max": 56,
+      "step": 1,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "title1_size_desktop",
+      "label": "Desktop",
+      "min": 20,
+      "max": 90,
+      "step": 1,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Tamaño de texto — línea 2 (destacado)"
+    },
+    {
+      "type": "range",
+      "id": "title2_size_mobile",
+      "label": "Mobile",
+      "min": 24,
+      "max": 80,
+      "step": 1,
+      "default": 38,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "title2_size_desktop",
+      "label": "Desktop",
+      "min": 32,
+      "max": 140,
+      "step": 2,
+      "default": 68,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Tamaño de texto — subtítulo"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_mobile",
+      "label": "Mobile",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_desktop",
+      "label": "Desktop",
+      "min": 14,
+      "max": 36,
+      "step": 1,
+      "default": 19,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Formulario Klaviyo"
+    },
+    {
+      "type": "text",
+      "id": "klaviyo_form_id",
+      "label": "ID del formulario",
+      "info": "El código del form de Klaviyo (ej: VnkEML). Lo encuentras en Klaviyo → Sign-up forms."
+    },
+    {
+      "type": "text",
+      "id": "klaviyo_company_id",
+      "label": "Company ID / Public API Key",
+      "info": "Opcional. Solo si el script de Klaviyo no está ya cargado en el tema."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Coming Soon"
+    }
+  ]
+}
+{% endschema %}

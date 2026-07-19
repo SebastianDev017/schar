@@ -1,0 +1,703 @@
+{%- comment -%}
+  Section 8: Preguntas Frecuentes – Dr. Schär México
+  ✔ Desktop: 2 columnas (título+botón | accordions)
+  ✔ Mobile: 1 columna apilada (título → accordions → botón)
+  ✔ Desplegables nativos <details>/<summary>
+  ✔ Máxima personalización (40+ controles)
+{%- endcomment -%}
+
+{%- liquid
+  assign heading = section.settings.heading
+  assign heading_tag = section.settings.heading_tag | default: 'h2'
+  assign button_label = section.settings.button_label
+  assign button_link = section.settings.button_link
+  assign has_button = false
+  if button_label != blank and button_link != blank
+    assign has_button = true
+  endif
+
+  assign heading_size_desktop = section.settings.heading_size_desktop | default: 56
+  assign heading_size_mobile = section.settings.heading_size_mobile | default: 36
+  assign heading_color = section.settings.heading_color | default: '#2C1A0E'
+  assign heading_line_height = section.settings.heading_line_height | default: 110
+
+  assign question_size_desktop = section.settings.question_size_desktop | default: 18
+  assign question_size_mobile = section.settings.question_size_mobile | default: 16
+  assign question_color = section.settings.question_color | default: '#2C1A0E'
+  assign answer_size_desktop = section.settings.answer_size_desktop | default: 16
+  assign answer_size_mobile = section.settings.answer_size_mobile | default: 14
+  assign answer_color = section.settings.answer_color | default: '#2C1A0E'
+  assign chevron_color = section.settings.chevron_color | default: '#2C1A0E'
+  assign divider_color = section.settings.divider_color | default: '#D5CBC0'
+
+  assign bg_color = section.settings.bg_color | default: '#F5F0EB'
+  assign padding_top = section.settings.padding_top | default: 80
+  assign padding_bottom = section.settings.padding_bottom | default: 80
+  assign content_gap = section.settings.content_gap | default: 60
+  assign left_col_width = section.settings.left_col_width | default: 40
+
+  assign btn_bg = section.settings.button_bg_color | default: '#C41E3A'
+  assign btn_text = section.settings.button_text_color | default: '#FFFFFF'
+  assign btn_bg_hover = section.settings.button_bg_hover | default: '#2C1A0E'
+  assign btn_text_hover = section.settings.button_text_hover | default: '#FFFFFF'
+  assign btn_radius = section.settings.button_border_radius | default: 50
+  assign btn_height = section.settings.button_height | default: 52
+  assign btn_padding_x = section.settings.button_padding_x | default: 36
+  assign btn_size_desktop = section.settings.button_size_desktop | default: 15
+  assign btn_size_mobile = section.settings.button_size_mobile | default: 14
+  assign btn_margin_top = section.settings.button_margin_top | default: 32
+-%}
+
+<section class="schar-faq" data-section-id="{{ section.id }}">
+  <div class="schar-faq__inner">
+
+    {%- comment -%} LEFT: Heading + Button (desktop) {%- endcomment -%}
+    <div class="schar-faq__left">
+      {%- unless heading == blank -%}
+        <{{ heading_tag }} class="schar-faq__heading" data-aos="fade-up">{{ heading }}</{{ heading_tag }}>
+      {%- endunless -%}
+
+      {%- if has_button -%}
+        <div class="schar-faq__btn-wrap schar-faq__btn-wrap--desktop" data-aos="fade-up">
+          <a class="schar-faq__btn" href="{{ button_link }}" {%- if button_link contains 'http' %} target="_blank" rel="noopener"{% endif -%}>
+            {{ button_label }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} RIGHT: Accordion {%- endcomment -%}
+    <div class="schar-faq__right" data-aos="fade-up">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign question = block.settings.question
+          assign answer = block.settings.answer
+        -%}
+
+        <details class="schar-faq__item" {{ block.shopify_attributes }}>
+          <summary class="schar-faq__question">
+            <span class="schar-faq__question-text">{{ question }}</span>
+            <svg class="schar-faq__chevron" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </summary>
+          <div class="schar-faq__answer">
+            {{ answer }}
+          </div>
+        </details>
+
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} BUTTON mobile (debajo de los accordions) {%- endcomment -%}
+    {%- if has_button -%}
+      <div class="schar-faq__btn-wrap schar-faq__btn-wrap--mobile" data-aos="fade-up">
+        <a class="schar-faq__btn" href="{{ button_link }}" {%- if button_link contains 'http' %} target="_blank" rel="noopener"{% endif -%}>
+          {{ button_label }}
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Preguntas Frecuentes",
+  "tag": "section",
+  "class": "schar-faq-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "── CONTENIDO ──"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Título",
+      "default": "<p>preguntas<br><strong>frecuentes</strong></p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texto del botón",
+      "default": "Ver todas las preguntas frecuentes"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Enlace del botón"
+    },
+    {
+      "type": "header",
+      "content": "── LAYOUT ──"
+    },
+    {
+      "type": "range",
+      "id": "left_col_width",
+      "label": "Ancho columna título (%)",
+      "min": 30,
+      "max": 50,
+      "step": 5,
+      "default": 40,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "label": "Espacio entre columnas (px)",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── FONDO Y ESPACIADO ──"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#F5F0EB"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding superior (px)",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding inferior (px)",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── TÍTULO ──"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Etiqueta HTML",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Tamaño desktop (px)",
+      "min": 24,
+      "max": 120,
+      "step": 2,
+      "default": 56,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Tamaño mobile (px)",
+      "min": 20,
+      "max": 72,
+      "step": 2,
+      "default": 36,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "label": "Line-height (%)",
+      "min": 80,
+      "max": 160,
+      "step": 5,
+      "default": 110,
+      "unit": "%"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "header",
+      "content": "── PREGUNTAS ──"
+    },
+    {
+      "type": "range",
+      "id": "question_size_desktop",
+      "label": "Tamaño pregunta desktop (px)",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "question_size_mobile",
+      "label": "Tamaño pregunta mobile (px)",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "question_color",
+      "label": "Color pregunta",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "range",
+      "id": "answer_size_desktop",
+      "label": "Tamaño respuesta desktop (px)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "answer_size_mobile",
+      "label": "Tamaño respuesta mobile (px)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "answer_color",
+      "label": "Color respuesta",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "color",
+      "id": "chevron_color",
+      "label": "Color del chevron",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Color del divisor",
+      "default": "#D5CBC0"
+    },
+    {
+      "type": "header",
+      "content": "── BOTÓN ──"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Fondo",
+      "default": "#C41E3A"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Texto",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_hover",
+      "label": "Fondo hover",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "color",
+      "id": "button_text_hover",
+      "label": "Texto hover",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Border radius (px)",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_height",
+      "label": "Altura (px)",
+      "min": 36,
+      "max": 72,
+      "step": 2,
+      "default": 52,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_padding_x",
+      "label": "Padding horizontal (px)",
+      "min": 16,
+      "max": 80,
+      "step": 2,
+      "default": 36,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_size_desktop",
+      "label": "Tamaño texto desktop (px)",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_size_mobile",
+      "label": "Tamaño texto mobile (px)",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_margin_top",
+      "label": "Margen superior (px)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 32,
+      "unit": "px"
+    }
+  ],
+  "max_blocks": 10,
+  "blocks": [
+    {
+      "name": "Pregunta",
+      "type": "faq_item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Pregunta",
+          "default": "¿Cuál es tu pregunta?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Respuesta",
+          "default": "<p>Aquí va la respuesta a la pregunta frecuente.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Preguntas Frecuentes",
+      "category": "Homepage",
+      "blocks": [
+        { "type": "faq_item", "settings": { "question": "Equipo básico para tu cocina libre de gluten", "answer": "<p>Descubre los utensilios esenciales para preparar alimentos sin gluten de manera segura y deliciosa.</p>" } },
+        { "type": "faq_item", "settings": { "question": "¿Puedo preparar la masa libre de gluten con antelación?", "answer": "<p>Sí, muchas masas sin gluten se pueden preparar con anticipación y refrigerar hasta por 24 horas.</p>" } },
+        { "type": "faq_item", "settings": { "question": "¿Por qué es importante el vapor de agua al hornear?", "answer": "<p>El vapor ayuda a crear una corteza crujiente y permite que el pan se expanda correctamente durante la cocción.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+{% style %}
+  @font-face {
+    font-family: 'Times ExtraBold';
+    src: url('https://cdn.shopify.com/s/files/1/0991/5082/3710/files/Times-ExtraBold.otf?v=1777160115') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  #shopify-section-{{ section.id }} {
+    --faq-font-heading: 'Times ExtraBold', 'Playfair Display', serif;
+    --faq-font-body: 'Inter', 'Poppins', sans-serif;
+    --faq-bg: {{ bg_color }};
+    --faq-pt: {{ padding_top }}px;
+    --faq-pb: {{ padding_bottom }}px;
+    --faq-gap: {{ content_gap }}px;
+    --faq-left-w: {{ left_col_width }}%;
+
+    --faq-h-desktop: {{ heading_size_desktop }}px;
+    --faq-h-mobile: {{ heading_size_mobile }}px;
+    --faq-h-color: {{ heading_color }};
+    --faq-h-lh: {{ heading_line_height }}%;
+
+    --faq-q-desktop: {{ question_size_desktop }}px;
+    --faq-q-mobile: {{ question_size_mobile }}px;
+    --faq-q-color: {{ question_color }};
+    --faq-a-desktop: {{ answer_size_desktop }}px;
+    --faq-a-mobile: {{ answer_size_mobile }}px;
+    --faq-a-color: {{ answer_color }};
+    --faq-chevron-color: {{ chevron_color }};
+    --faq-divider: {{ divider_color }};
+
+    --faq-btn-bg: {{ btn_bg }};
+    --faq-btn-text: {{ btn_text }};
+    --faq-btn-bg-hover: {{ btn_bg_hover }};
+    --faq-btn-text-hover: {{ btn_text_hover }};
+    --faq-btn-radius: {{ btn_radius }}px;
+    --faq-btn-height: {{ btn_height }}px;
+    --faq-btn-px: {{ btn_padding_x }}px;
+    --faq-btn-desktop: {{ btn_size_desktop }}px;
+    --faq-btn-mobile: {{ btn_size_mobile }}px;
+    --faq-btn-mt: {{ btn_margin_top }}px;
+  }
+
+  /* =============================================
+     BASE
+     ============================================= */
+  .schar-faq {
+    background-color: var(--faq-bg);
+    padding: var(--faq-pt) var(--header-mobile-padding, 22px) var(--faq-pb);
+  }
+
+  .schar-faq__inner {
+    max-width: 1314px;
+    margin: 0 auto;
+  }
+
+  /* =============================================
+     HEADING – Times ExtraBold
+     ============================================= */
+  .schar-faq__heading,
+  .schar-faq__heading * {
+    font-family: var(--faq-font-heading) !important;
+    font-style: normal;
+    font-weight: 400 !important;
+    color: var(--faq-h-color);
+    font-size: clamp(
+      var(--faq-h-mobile),
+      calc(var(--faq-h-mobile) + ({{ heading_size_desktop }} - {{ heading_size_mobile }}) * ((100vw - 375px) / (1440 - 375))),
+      var(--faq-h-desktop)
+    );
+    line-height: var(--faq-h-lh);
+    margin: 0;
+  }
+
+  .schar-faq__heading strong,
+  .schar-faq__heading strong *,
+  .schar-faq__heading b,
+  .schar-faq__heading b * {
+    font-weight: 400 !important;
+    color: #C41E3A;
+  }
+
+  /* =============================================
+     ACCORDION
+     ============================================= */
+  .schar-faq__item {
+    border-bottom: 1px solid var(--faq-divider);
+  }
+
+  .schar-faq__item:first-child {
+    border-top: 1px solid var(--faq-divider);
+  }
+
+  .schar-faq__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 0;
+    cursor: pointer;
+    list-style: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .schar-faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .schar-faq__question-text {
+    font-family: var(--faq-font-body);
+    font-size: clamp(
+      var(--faq-q-mobile),
+      calc(var(--faq-q-mobile) + ({{ question_size_desktop }} - {{ question_size_mobile }}) * ((100vw - 375px) / (1440 - 375))),
+      var(--faq-q-desktop)
+    );
+    font-weight: 500;
+    color: var(--faq-q-color);
+    line-height: 1.4;
+    flex: 1;
+  }
+
+  .schar-faq__chevron {
+    flex-shrink: 0;
+    color: var(--faq-chevron-color);
+    transition: transform 0.3s ease;
+  }
+
+  /* Chevron rota cuando está abierto */
+  .schar-faq__item[open] .schar-faq__chevron {
+    transform: rotate(90deg);
+  }
+
+  .schar-faq__answer {
+    padding: 0 0 20px 0;
+    overflow: hidden;
+  }
+
+  .schar-faq__answer,
+  .schar-faq__answer * {
+    font-family: var(--faq-font-body);
+    font-size: clamp(
+      var(--faq-a-mobile),
+      calc(var(--faq-a-mobile) + ({{ answer_size_desktop }} - {{ answer_size_mobile }}) * ((100vw - 375px) / (1440 - 375))),
+      var(--faq-a-desktop)
+    );
+    font-weight: 400;
+    color: var(--faq-a-color);
+    line-height: 1.6;
+  }
+
+  .schar-faq__answer p {
+    margin: 0;
+  }
+
+  .schar-faq__answer p + p {
+    margin-top: 12px;
+  }
+
+  /* =============================================
+     BOTÓN
+     ============================================= */
+  .schar-faq__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: var(--faq-btn-height);
+    padding: 0 var(--faq-btn-px);
+    background-color: var(--faq-btn-bg);
+    color: var(--faq-btn-text);
+    border: none;
+    border-radius: var(--faq-btn-radius);
+    font-family: var(--faq-font-body);
+    font-size: clamp(
+      var(--faq-btn-mobile),
+      calc(var(--faq-btn-mobile) + ({{ btn_size_desktop }} - {{ btn_size_mobile }}) * ((100vw - 375px) / (1440 - 375))),
+      var(--faq-btn-desktop)
+    );
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  }
+
+  .schar-faq__btn:hover {
+    background-color: var(--faq-btn-bg-hover);
+    color: var(--faq-btn-text-hover);
+    transform: translateY(-1px);
+  }
+
+  .schar-faq__btn:active {
+    transform: translateY(0);
+  }
+
+  .schar-faq__btn-wrap {
+    margin-top: var(--faq-btn-mt);
+  }
+
+  /* Desktop: ocultar botón mobile, mostrar desktop */
+  .schar-faq__btn-wrap--desktop {
+    display: none;
+  }
+
+  .schar-faq__btn-wrap--mobile {
+    display: block;
+  }
+
+  /* =============================================
+     MOBILE-FIRST (default: 1 columna)
+     ============================================= */
+  .schar-faq__left {
+    margin-bottom: 32px;
+    text-align: center;
+  }
+
+  /* =============================================
+     DESKTOP: 2 columnas
+     ============================================= */
+  @media (min-width: 835px) {
+    .schar-faq {
+      padding-left: var(--header-desktop-padding, 63px);
+      padding-right: var(--header-desktop-padding, 63px);
+    }
+
+    .schar-faq__inner {
+      display: grid;
+      grid-template-columns: var(--faq-left-w) 1fr;
+      gap: var(--faq-gap);
+      align-items: start;
+    }
+
+    .schar-faq__left {
+      position: sticky;
+      top: 120px;
+      margin-bottom: 0;
+      text-align: left;
+    }
+
+    /* Desktop: mostrar botón en columna izquierda */
+    .schar-faq__btn-wrap--desktop {
+      display: block;
+    }
+
+    /* Desktop: ocultar botón debajo de accordions */
+    .schar-faq__btn-wrap--mobile {
+      display: none;
+    }
+
+    .schar-faq__btn {
+      width: auto;
+    }
+  }
+
+  @media (min-width: 681px) and (max-width: 834px) {
+    .schar-faq {
+      padding-left: var(--header-tablet-padding, 46px);
+      padding-right: var(--header-tablet-padding, 46px);
+    }
+  }
+
+  @media (hover: hover) {
+    .schar-faq__btn:hover {
+      background-color: var(--faq-btn-bg-hover);
+      color: var(--faq-btn-text-hover);
+    }
+    .schar-faq__question:hover .schar-faq__question-text {
+      color: #C41E3A;
+    }
+  }
+{% endstyle %}

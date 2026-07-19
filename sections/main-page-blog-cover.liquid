@@ -1,0 +1,79 @@
+{%- comment -%}theme-check-disable LiquidTag{%- endcomment -%}
+{{- "css-main-page-blog-cover.css" | asset_url | stylesheet_tag -}}
+
+{%- liquid 
+  assign title = page.title
+  assign image = section.settings.image
+  assign text = section.settings.text
+-%}
+
+{% capture page_title %}
+  {% assign splitted_title = title | split: ' ' %}
+  {% for word in splitted_title %}
+    {% unless forloop.last %}
+      {{- word -}}
+    {% endunless %}
+    {% if forloop.last %}
+      {% if forloop.index > 1 %}
+        <span class="secondary-font-bold">{{- word -}}</span>
+      {% else %}
+        {{- word -}}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endcapture %}
+
+<div class="collection-cover blog-cover{% if image == blank %} no-image{%- endif -%}" data-section-id="{{- section.id -}}" data-section-type="blog-cover">
+  {%- unless image == blank -%}
+    <div class="collection-image-wrapper blog-cover-image-wrapper">
+      <picture>
+        <source media="(max-width: 450px)" srcset="{{- image | image_url: width: 600 -}}">
+        <source media="(max-width: 834px)" srcset="{{- image | image_url: width: 800 -}}">
+        <img class="collection-image blog-cover-image no-touch" alt="{{- image.alt -}}" fetchpriority="high" src="{{- image | image_url: width: 1000 -}}">
+      </picture>
+    </div>
+  {%- endunless -%}
+  <div class="blog-cover-info collection-info">
+    <div class="blog-cover-info-inner-wrapper collection-info-inner-wrapper">
+      <div class="blog-cover-info-inner collection-info-inner">
+        <header class="blog-cover-title-wrapper collection-title-wrapper">
+          <h1 class="collection-title color-green secondary-font">{{- page_title -}}</h1>
+        </header>
+        {%- unless text == blank -%}
+          <div class="blog-cover-description collection-description color-green page-text">{{- text -}}</div>
+        {%- endunless -%}
+        {%- render 'blog-search' -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{%- schema -%}
+  {
+    "name": "Blog - Portada",
+    "tag": "section",
+    "class": "blog-cover",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Imagen"
+      },
+      {
+        "type": "text",
+        "id": "text",
+        "label": "Texto"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Blog - Portada",
+        "category": "Page"
+      }
+    ]
+  }
+{% endschema %}

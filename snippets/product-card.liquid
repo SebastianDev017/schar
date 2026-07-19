@@ -1,0 +1,506 @@
+{%- comment -%}
+  Product Card – Dr. Schär México
+  ✔ Nombre → Descripción → Peso → Precio → Reviews → Variantes → Botones
+  ✔ Precio (con descuento tachado si aplica), se actualiza por variante
+  ✔ Variantes INLINE: swatch con imagen + tag flotante / píldora outline de texto
+  ✔ Selector solo si hay 2+ variantes
+  ✔ "Añadir al carrito" agrega la variante seleccionada vía AJAX (abre el drawer)
+  ✔ Sold out → botón "Agotado" en tono tenue de marca
+  ✔ "Ver producto": píldora outline → página completa
+  ✔ Requiere el snippet 'schar-card-cart' renderizado una vez (ver instrucciones)
+{%- endcomment -%}
+
+{%- liquid
+  assign metafields = product.metafields.custom
+  assign available = product.available
+  assign title = product.title
+  assign etapa = metafields.etapa.value | handleize
+  assign url_etiqueta = metafields.etiqueta.value
+  assign url = product.url
+  assign featured_image = product.featured_image
+  assign first_variant = product.selected_or_first_available_variant
+
+  assign variant_count = product.variants.size
+  assign show_variants = false
+  if variant_count > 1
+    assign show_variants = true
+  endif
+
+  assign card_description = metafields.descripcion_corta
+  if card_description == blank
+    assign card_description = product.description
+  endif
+
+  assign card_weight = metafields.peso
+  if card_weight == blank and first_variant.weight > 0
+    assign card_weight = first_variant.weight | weight_with_unit
+  endif
+-%}
+
+<article class="product-card schar-product-card">
+
+  {%- comment -%} IMAGEN {%- endcomment -%}
+  <div class="product-card-image-container-wrapper">
+    <div class="product-card-image-container"></div>
+    <div class="product-card-image-wrapper">
+      <div class="product-card-image-content">
+        <a href="{{ url }}" class="schar-product-card__img-link">
+          {%- unless featured_image == blank -%}
+            <div class="js-product-card-featured-image schar-product-card__img-wrap">
+              {%- if product.metafields.custom.producto_nuevo == true -%}
+                {%- render 'new-product' -%}
+              {%- endif -%}
+              <img
+                class="product-card-image featured-image schar-product-card__img"
+                alt="{{ featured_image.alt | escape }}"
+                loading="lazy"
+                src="{{ featured_image | image_url: width: 900 }}"
+              >
+            </div>
+          {%- endunless -%}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} INFO {%- endcomment -%}
+  <div class="schar-product-card__info">
+
+    {%- comment -%} Nombre {%- endcomment -%}
+    <h3 class="product-card-title schar-product-card__title">
+      <a href="{{ url }}">{{ title }}</a>
+    </h3>
+
+    {%- comment -%} Descripción corta {%- endcomment -%}
+    {%- unless card_description == blank -%}
+      <p class="schar-product-card__desc">
+        {{- card_description | strip_html | strip | truncate: 60 -}}
+      </p>
+    {%- endunless -%}
+
+    {%- comment -%} Peso {%- endcomment -%}
+    {%- unless card_weight == blank -%}
+      <p class="schar-product-card__weight">{{ card_weight }}</p>
+    {%- endunless -%}
+
+    {%- comment -%} Precio (con descuento si aplica) {%- endcomment -%}
+    <div class="schar-product-card__price" data-schar-price>
+      {%- if first_variant.compare_at_price > first_variant.price -%}
+        <span class="schar-product-card__price-sale">{{ first_variant.price | money }}</span>
+        <span class="schar-product-card__price-compare">{{ first_variant.compare_at_price | money }}</span>
+      {%- else -%}
+        <span class="schar-product-card__price-regular">{{ first_variant.price | money }}</span>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Badge de etapa {%- endcomment -%}
+    {%- unless etapa == blank -%}
+      <div class="product-card-badge-wrapper schar-product-card__badge">
+        <a class="product-card-badge {{ etapa }}" href="{{ url }}">
+          {%- render 'icon', icon: etapa -%}
+        </a>
+      </div>
+    {%- endunless -%}
+
+    {%- comment -%} Reviews {%- endcomment -%}
+    <div class="product-card-reviews schar-product-card__reviews">
+      <a href="{{ url }}">
+        {%- render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', jm_style: '', concierge_install: false, product: product -%}
+      </a>
+    </div>
+
+    {%- comment -%} Variantes inline (solo si hay 2+ variantes) {%- endcomment -%}
+    {%- if show_variants and available -%}
+      <div class="schar-product-card__variants" data-schar-variants>
+        {%- for v in product.variants -%}
+          {%- assign v_img = v.featured_image -%}
+          <button
+            type="button"
+            class="schar-product-card__variant{% if v.id == first_variant.id %} is-active{% endif %}{% unless v_img %} is-text{% endunless %}{% unless v.available %} is-soldout{% endunless %}"
+            data-schar-variant
+            data-variant-id="{{ v.id }}"
+            data-variant-available="{{ v.available }}"
+            data-variant-price="{{ v.price }}"
+            data-variant-compare="{{ v.compare_at_price | default: 0 }}"
+            data-variant-image="{% if v_img %}{{ v_img | image_url: width: 600 }}{% endif %}"
+            data-variant-title="{{ v.title | escape }}"
+            aria-label="{{ v.title | escape }}"
+          >
+            {%- if v_img -%}
+              <img class="schar-product-card__variant-img" src="{{ v_img | image_url: width: 120 }}" alt="{{ v.title | escape }}" loading="lazy">
+              <span class="schar-product-card__variant-tag">{{ v.title }}</span>
+            {%- else -%}
+              <span class="schar-product-card__variant-text">{{ v.title }}</span>
+            {%- endif -%}
+          </button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} Botón: añadir al carrito (variante seleccionada) {%- endcomment -%}
+    <div class="product-card-button-wrapper schar-product-card__btn-wrap">
+      <button
+        type="button"
+        class="product-card-button button schar-product-card__btn{% unless first_variant.available %} is-disabled{% endunless %}"
+        data-schar-add
+        data-variant-id="{{ first_variant.id }}"
+        {% unless first_variant.available %}disabled{% endunless %}
+      >
+        <span class="schar-qa-btn-label">{% if first_variant.available %}Añadir al carrito{% else %}Agotado{% endif %}</span>
+        <span class="schar-qa-btn-spinner" aria-hidden="true"></span>
+      </button>
+    </div>
+
+    {%- comment -%} Link "Ver producto" (píldora outline) {%- endcomment -%}
+    <div class="schar-product-card__view-wrap">
+      <a class="schar-product-card__view" href="{{ url }}">Ver producto</a>
+    </div>
+
+    {%- comment -%} Etiqueta descargable {%- endcomment -%}
+    {%- if url_etiqueta != blank -%}
+      <div class="product-card-external-button-wrapper schar-product-card__ext-wrap">
+        <a class="product-card-external-button schar-product-card__ext-btn" href="{{ url_etiqueta }}" target="_blank" rel="noopener">
+          {%- render 'icon', icon: 'download' -%}
+          <span class="product-card-external-button-label schar-product-card__ext-label">Descargar etiqueta</span>
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</article>
+
+<style>
+  /* =============================================
+     PRODUCT CARD – Dr. Schär México
+     ============================================= */
+  .schar-product-card {
+    --schar-font-heading: 'Times ExtraBold', 'Playfair Display', serif;
+    --schar-font-body: 'Cabin', 'Inter', sans-serif;
+    --schar-dark: #2C1A0E;
+    --schar-red: #C41E3A;
+    --schar-beige: #E8DDD0;
+    --schar-beige-light: #F5F0EB;
+    --schar-border: #D5CBC0;
+    --schar-muted: #B8AA9C;
+    --schar-white: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+  }
+
+  .schar-product-card__info {
+    width: 100%;
+    padding: 16px 8px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+  }
+
+  /* --- Nombre --- */
+  .schar-product-card__title {
+    margin: 0 0 6px 0;
+    display: block !important;
+    height: auto !important;
+  }
+  .schar-product-card__title,
+  .schar-product-card__title a {
+    font-family: var(--schar-font-body) !important;
+    font-size: 17px !important;
+    font-weight: 700 !important;
+    line-height: 1.3;
+    color: var(--schar-dark) !important;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .schar-product-card__title a:hover { color: var(--schar-red) !important; }
+
+  /* --- Descripción --- */
+  .schar-product-card__desc {
+    margin: 0 0 8px 0;
+    font-family: var(--schar-font-body);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--schar-dark);
+    opacity: 0.8;
+  }
+
+  /* --- Peso --- */
+  .schar-product-card__weight {
+    margin: 0 0 6px 0;
+    font-family: var(--schar-font-body);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--schar-muted);
+  }
+
+  /* --- Precio --- */
+  .schar-product-card__price {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 8px;
+    margin: 0 0 12px 0;
+    font-family: var(--schar-font-body);
+  }
+  .schar-product-card__price-regular,
+  .schar-product-card__price-sale {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--schar-dark);
+  }
+  .schar-product-card__price-sale { color: var(--schar-red); }
+  .schar-product-card__price-compare {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--schar-muted);
+    text-decoration: line-through;
+    text-decoration-thickness: 1.5px;
+  }
+
+  /* --- Badge --- */
+  .schar-product-card__badge { margin: 0 0 6px 0; }
+
+  /* --- Reviews --- */
+  .schar-product-card__reviews { margin: 0 0 12px 0; }
+
+  /* =============================================
+     VARIANTES INLINE
+     ============================================= */
+  .schar-product-card__variants {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 7px;
+    width: 100%;
+    margin: 0 0 14px 0;
+  }
+
+  .schar-product-card__variant {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    background-color: var(--schar-beige-light);
+    cursor: pointer;
+    transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+  }
+
+  /* Swatch con imagen */
+  .schar-product-card__variant:not(.is-text) {
+    width: 42px;
+    height: 42px;
+  }
+  .schar-product-card__variant-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+    display: block;
+  }
+  .schar-product-card__variant:not(.is-text):hover { border-color: var(--schar-border); transform: translateY(-1px); }
+  .schar-product-card__variant:not(.is-text).is-active {
+    border-color: var(--schar-dark);
+    box-shadow: 0 3px 10px rgba(44, 26, 14, 0.18);
+  }
+
+  /* Píldora de texto OUTLINE (variante sin imagen) */
+  .schar-product-card__variant.is-text {
+    border: 1px solid var(--schar-dark);
+    border-radius: 50px;
+    padding: 8px 16px;
+    background-color: transparent;
+  }
+  .schar-product-card__variant-text {
+    font-family: var(--schar-font-body);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--schar-dark);
+    white-space: nowrap;
+    line-height: 1;
+    transition: color 0.18s ease;
+  }
+  .schar-product-card__variant.is-text:hover {
+    background-color: rgba(44, 26, 14, 0.05);
+  }
+  .schar-product-card__variant.is-text.is-active {
+    background-color: var(--schar-dark);
+    border-color: var(--schar-dark);
+  }
+  .schar-product-card__variant.is-text.is-active .schar-product-card__variant-text {
+    color: var(--schar-white);
+  }
+
+  /* Sold out: tenue + línea diagonal */
+  .schar-product-card__variant.is-soldout { opacity: 0.45; }
+  .schar-product-card__variant.is-soldout::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(to top right, transparent calc(50% - 0.8px), rgba(44,26,14,0.4) 50%, transparent calc(50% + 0.8px));
+    pointer-events: none;
+  }
+
+  /* Tag flotante con el nombre (swatches con imagen) */
+  .schar-product-card__variant-tag {
+    position: absolute;
+    bottom: calc(100% + 7px);
+    left: 50%;
+    transform: translateX(-50%) translateY(5px);
+    z-index: 6;
+    padding: 4px 10px;
+    background-color: var(--schar-dark);
+    color: var(--schar-white);
+    border-radius: 50px;
+    font-family: var(--schar-font-body);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow: 0 4px 14px rgba(44, 26, 14, 0.28);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .schar-product-card__variant-tag::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: var(--schar-dark);
+  }
+  .schar-product-card__variant:hover .schar-product-card__variant-tag,
+  .schar-product-card__variant:focus-visible .schar-product-card__variant-tag {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* =============================================
+     BOTÓN AÑADIR
+     ============================================= */
+  .schar-product-card__btn-wrap {
+    width: 100%;
+    margin-top: auto;
+    padding-top: 4px;
+  }
+  button.schar-product-card__btn {
+    border: none;
+    cursor: pointer;
+    width: 100%;
+  }
+  .schar-product-card__btn.button {
+    --width: 100%;
+    --height: 44px;
+    --background-color: var(--schar-dark);
+    --text-color: var(--schar-white);
+    --hover-background-color: var(--schar-red);
+    --hover-text-color: var(--schar-white);
+    position: relative;
+    border-radius: 50px !important;
+    font-family: var(--schar-font-body) !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
+  }
+  /* Sold out: tono muy tenue de marca */
+  .schar-product-card__btn.button.disabled,
+  .schar-product-card__btn.button.is-disabled {
+    --background-color: rgba(44, 26, 14, 0.08);
+    --hover-background-color: rgba(44, 26, 14, 0.08);
+    --text-color: rgba(44, 26, 14, 0.45);
+    --hover-text-color: rgba(44, 26, 14, 0.45);
+    color: rgba(44, 26, 14, 0.45) !important;
+    cursor: not-allowed;
+    opacity: 1;
+  }
+
+  /* Estados loading / done */
+  .schar-qa-btn-spinner {
+    display: none;
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 16px; height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #FFFFFF;
+    border-radius: 50%;
+    animation: scharCardSpin 0.6s linear infinite;
+  }
+  .schar-product-card__btn.is-loading .schar-qa-btn-label { visibility: hidden; }
+  .schar-product-card__btn.is-loading .schar-qa-btn-spinner { display: block; }
+  @keyframes scharCardSpin { to { transform: rotate(360deg); } }
+
+  /* =============================================
+     "VER PRODUCTO" – píldora outline
+     ============================================= */
+  .schar-product-card__view-wrap {
+    width: 100%;
+    margin-top: 9px;
+    display: flex;
+    justify-content: center;
+  }
+  .schar-product-card__view {
+    display: inline-block;
+    padding: 9px 22px;
+    border: 1px solid var(--schar-dark);
+    border-radius: 50px;
+    background-color: transparent;
+    font-family: var(--schar-font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--schar-dark);
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .schar-product-card__view:hover {
+    background-color: var(--schar-dark);
+    color: var(--schar-white);
+  }
+
+  /* --- Etiqueta descargable --- */
+  .schar-product-card__ext-wrap { margin-top: 12px; }
+  .schar-product-card__ext-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .schar-product-card__ext-label {
+    font-family: var(--schar-font-body) !important;
+    font-size: 13px !important;
+    color: var(--schar-dark) !important;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    transition: color 0.2s ease;
+  }
+  .schar-product-card__ext-btn:hover .schar-product-card__ext-label { color: var(--schar-red) !important; }
+
+  /* --- Imagen --- */
+  .schar-product-card__img { transition: transform 0.3s ease, opacity 0.25s ease; }
+  .schar-product-card__img-link:hover .schar-product-card__img { transform: scale(1.03); }
+  .schar-product-card__img-wrap { position: relative; }
+
+  /* --- Mobile --- */
+  @media (max-width: 680px) {
+    .schar-product-card__title,
+    .schar-product-card__title a { font-size: 15px !important; }
+    .schar-product-card__desc { font-size: 13px; }
+    .schar-product-card__price-regular,
+    .schar-product-card__price-sale { font-size: 16px; }
+    .schar-product-card__variant:not(.is-text) { width: 38px; height: 38px; }
+    .schar-product-card__btn.button { --height: 38px; font-size: 12px !important; }
+    .schar-product-card__view { font-size: 12px; padding: 8px 20px; }
+  }
+</style>

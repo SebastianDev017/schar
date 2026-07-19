@@ -1,0 +1,925 @@
+{%- comment -%}
+  Section 4: Texto + Imagen + Íconos – Dr. Schär México
+  ✔ Sin imagen → columna de imagen desaparece del DOM, texto centrado
+  ✔ Con imagen → grid 2 columnas con íconos flotantes
+  ✔ Funciona como sección de texto enriquecido O imagen-texto
+  ✔ Máxima personalización (47+ controles)
+{%- endcomment -%}
+
+{%- liquid
+  assign image = section.settings.image
+  assign title = section.settings.title
+  assign text = section.settings.text
+  assign button_label = section.settings.button_label
+  assign button_link = section.settings.button_link
+  assign heading_tag = section.settings.heading_tag | default: 'h2'
+  assign text_alignment = section.settings.text_alignment | default: 'left'
+  assign image_position = section.settings.image_position | default: 'left'
+  assign has_button = false
+  assign has_image = false
+
+  if button_label != blank and button_link != blank
+    assign has_button = true
+  endif
+
+  if image != blank
+    assign has_image = true
+  endif
+
+  comment — Sizes
+  endcomment
+  assign heading_size_desktop = section.settings.heading_size_desktop | default: 56
+  assign heading_size_mobile = section.settings.heading_size_mobile | default: 32
+  assign text_size_desktop = section.settings.text_size_desktop | default: 20
+  assign text_size_mobile = section.settings.text_size_mobile | default: 15
+  assign btn_size_desktop = section.settings.button_size_desktop | default: 13
+  assign btn_size_mobile = section.settings.button_size_mobile | default: 12
+
+  comment — Colors
+  endcomment
+  assign bg_color = section.settings.bg_color | default: '#E8DDD0'
+  assign heading_color = section.settings.heading_color | default: '#2C1A0E'
+  assign text_color = section.settings.text_color | default: '#2C1A0E'
+  assign btn_bg = section.settings.button_bg_color | default: '#2C1A0E'
+  assign btn_text = section.settings.button_text_color | default: '#FFFFFF'
+  assign btn_bg_hover = section.settings.button_bg_hover | default: '#C41E3A'
+  assign btn_text_hover = section.settings.button_text_hover | default: '#FFFFFF'
+  assign btn_radius = section.settings.button_border_radius | default: 50
+  assign btn_height = section.settings.button_height | default: 48
+  assign btn_padding_x = section.settings.button_padding_x | default: 32
+
+  comment — Layout
+  endcomment
+  assign content_gap = section.settings.content_gap | default: 60
+  assign image_col_width = section.settings.image_col_width | default: 45
+  assign padding_top = section.settings.padding_top | default: 80
+  assign padding_bottom = section.settings.padding_bottom | default: 80
+  assign heading_line_height = section.settings.heading_line_height | default: 110
+  assign heading_margin_bottom = section.settings.heading_margin_bottom | default: 24
+  assign text_margin_top = section.settings.text_margin_top | default: 20
+  assign button_margin_top = section.settings.button_margin_top | default: 32
+  assign text_max_width = section.settings.text_max_width | default: 600
+  assign vertical_align = section.settings.vertical_align | default: 'center'
+
+  comment — Text-only alignment (when no image)
+  endcomment
+  assign text_only_alignment = section.settings.text_only_alignment | default: 'center'
+  assign text_only_max_width = section.settings.text_only_max_width | default: 700
+-%}
+
+<section class="schar-tii" data-section-id="{{ section.id }}" data-section-type="text-image-icons">
+  <div class="schar-tii__grid{% if has_image %} schar-tii__grid--has-image{% if image_position == 'right' %} schar-tii__grid--img-right{% endif %}{% else %} schar-tii__grid--text-only{% endif %}">
+
+    {%- comment -%} IMAGE COLUMN – solo si hay imagen {%- endcomment -%}
+    {%- if has_image -%}
+      <div class="schar-tii__image-col" data-aos="fade-up">
+        <div class="schar-tii__image-container">
+
+          <div class="schar-tii__image-wrapper">
+            <img
+              class="schar-tii__image"
+              src="{{ image | image_url: width: 1000 }}"
+              alt="{{ image.alt | escape | default: title | strip_html | escape }}"
+              loading="lazy"
+            >
+          </div>
+
+          {%- if section.blocks.size > 0 -%}
+            <div class="schar-tii__icons">
+              {%- for block in section.blocks -%}
+                {%- liquid
+                  assign icon = block.settings.icon
+                  assign icon_text = block.settings.text
+                  assign icon_color = block.settings.icon_color | default: '#2C1A0E'
+                  assign icon_pos_top = block.settings.position_top | default: 0
+                  assign icon_pos_left = block.settings.position_left | default: 50
+                -%}
+                <div
+                  class="schar-tii__icon"
+                  style="top: {{ icon_pos_top }}%; left: {{ icon_pos_left }}%; --icon-text-color: {{ icon_color }};"
+                  data-aos="fade-up"
+                  data-aos-delay="{{ forloop.index | times: 100 }}"
+                  {{ block.shopify_attributes }}
+                >
+                  {%- unless icon == blank -%}
+                    <div class="schar-tii__icon-img-wrap">
+                      <img
+                        src="{{ icon | image_url: width: 200 }}"
+                        alt="{{ icon.alt | escape | default: icon_text }}"
+                        class="schar-tii__icon-img"
+                        loading="lazy"
+                      >
+                    </div>
+                  {%- endunless -%}
+                  {%- unless icon_text == blank -%}
+                    <p class="schar-tii__icon-label">{{ icon_text }}</p>
+                  {%- endunless -%}
+                </div>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} TEXT COLUMN {%- endcomment -%}
+    <div
+      class="schar-tii__text-col"
+      data-aos="fade-up"
+      style="text-align: {% if has_image %}{{ text_alignment }}{% else %}{{ text_only_alignment }}{% endif %};"
+    >
+      <div class="schar-tii__text-inner">
+
+        {%- unless title == blank -%}
+          <{{ heading_tag }} class="schar-tii__heading">{{ title }}</{{ heading_tag }}>
+        {%- endunless -%}
+
+        {%- unless text == blank -%}
+          <div class="schar-tii__text">{{ text }}</div>
+        {%- endunless -%}
+
+        {%- if has_button -%}
+          <div class="schar-tii__btn-wrap">
+            <a
+              class="schar-tii__btn"
+              href="{{ button_link }}"
+              {%- if button_link contains 'http' or button_link contains 'mailto:' or button_link contains 'tel:' %} target="_blank" rel="noopener"{% endif -%}
+            >
+              {{ button_label }}
+            </a>
+          </div>
+        {%- endif -%}
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Texto + Imagen + Íconos",
+  "tag": "section",
+  "class": "schar-tii-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "── IMAGEN ──"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen principal",
+      "info": "Si no subes imagen, la sección funciona como bloque de texto centrado."
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Posición de la imagen",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "info": "Solo aplica cuando hay imagen."
+    },
+    {
+      "type": "range",
+      "id": "image_col_width",
+      "label": "Ancho columna imagen (%)",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "default": 45,
+      "unit": "%",
+      "info": "Solo aplica cuando hay imagen."
+    },
+    {
+      "type": "header",
+      "content": "── CONTENIDO ──"
+    },
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Título",
+      "default": "<p><strong>¿eres celiaco?</strong></p>"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Texto",
+      "default": "<p>Quieres saber más acerca de qué es y saber si es que tú eres celiaco...</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texto del botón",
+      "default": "Conoce más aquí"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Enlace del botón"
+    },
+    {
+      "type": "header",
+      "content": "── LAYOUT CON IMAGEN ──"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alineación del texto (con imagen)",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "vertical_align",
+      "label": "Alineación vertical",
+      "default": "center",
+      "options": [
+        { "value": "flex-start", "label": "Arriba" },
+        { "value": "center", "label": "Centro" },
+        { "value": "flex-end", "label": "Abajo" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "label": "Espacio entre columnas (px)",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "text_max_width",
+      "label": "Ancho máximo del texto (px)",
+      "min": 300,
+      "max": 900,
+      "step": 10,
+      "default": 600,
+      "unit": "px",
+      "info": "Aplica cuando hay imagen."
+    },
+    {
+      "type": "header",
+      "content": "── LAYOUT SIN IMAGEN ──"
+    },
+    {
+      "type": "select",
+      "id": "text_only_alignment",
+      "label": "Alineación (sin imagen)",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "text_only_max_width",
+      "label": "Ancho máximo texto (sin imagen)",
+      "min": 400,
+      "max": 1200,
+      "step": 10,
+      "default": 700,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── FONDO Y ESPACIADO ──"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#E8DDD0"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding superior (px)",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding inferior (px)",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── TÍTULO ──"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Etiqueta HTML (SEO)",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Tamaño desktop (px)",
+      "min": 24,
+      "max": 120,
+      "step": 2,
+      "default": 56,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Tamaño mobile (px)",
+      "min": 20,
+      "max": 72,
+      "step": 2,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "label": "Line-height (%)",
+      "min": 80,
+      "max": 160,
+      "step": 5,
+      "default": 110,
+      "unit": "%"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom",
+      "label": "Margen inferior (px)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── TEXTO ──"
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Tamaño desktop (px)",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Tamaño mobile (px)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "range",
+      "id": "text_margin_top",
+      "label": "Margen superior (px)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── BOTÓN ──"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Fondo",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Texto",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_hover",
+      "label": "Fondo hover",
+      "default": "#C41E3A"
+    },
+    {
+      "type": "color",
+      "id": "button_text_hover",
+      "label": "Texto hover",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Border radius (px)",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_height",
+      "label": "Altura (px)",
+      "min": 32,
+      "max": 72,
+      "step": 2,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_padding_x",
+      "label": "Padding horizontal (px)",
+      "min": 12,
+      "max": 60,
+      "step": 2,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_size_desktop",
+      "label": "Tamaño texto desktop (px)",
+      "min": 10,
+      "max": 22,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_size_mobile",
+      "label": "Tamaño texto mobile (px)",
+      "min": 9,
+      "max": 18,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_margin_top",
+      "label": "Margen superior (px)",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "default": 32,
+      "unit": "px"
+    }
+  ],
+  "max_blocks": 8,
+  "blocks": [
+    {
+      "name": "Ícono",
+      "type": "icon",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Imagen del ícono"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texto del ícono"
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "Color del texto",
+          "default": "#2C1A0E"
+        },
+        {
+          "type": "range",
+          "id": "position_top",
+          "label": "Posición vertical (%)",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 10,
+          "unit": "%"
+        },
+        {
+          "type": "range",
+          "id": "position_left",
+          "label": "Posición horizontal (%)",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 50,
+          "unit": "%"
+        },
+        {
+          "type": "range",
+          "id": "icon_size",
+          "label": "Tamaño del ícono (px)",
+          "min": 30,
+          "max": 100,
+          "step": 2,
+          "default": 56,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "label_size",
+          "label": "Tamaño texto ícono (px)",
+          "min": 10,
+          "max": 20,
+          "step": 1,
+          "default": 14,
+          "unit": "px"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Texto + Imagen + Íconos",
+      "category": "Homepage"
+    }
+  ]
+}
+{% endschema %}
+
+{% style %}
+  /* =============================================
+     FONT: Times ExtraBold
+     ============================================= */
+  @font-face {
+    font-family: 'Times ExtraBold';
+    src: url('https://cdn.shopify.com/s/files/1/0991/5082/3710/files/Times-ExtraBold.otf?v=1777160115') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* =============================================
+     VARIABLES
+     ============================================= */
+  #shopify-section-{{ section.id }} {
+    --schar-font-heading: 'Times ExtraBold', 'Playfair Display', serif;
+    --schar-font-body: 'Inter', 'Poppins', sans-serif;
+
+    --tii-bg: {{ bg_color }};
+    --tii-padding-top: {{ padding_top }}px;
+    --tii-padding-bottom: {{ padding_bottom }}px;
+
+    --tii-gap: {{ content_gap }}px;
+    --tii-image-col: {{ image_col_width }}%;
+    --tii-text-max-width: {{ text_max_width }}px;
+    --tii-text-only-max-width: {{ text_only_max_width }}px;
+
+    --tii-heading-desktop: {{ heading_size_desktop }}px;
+    --tii-heading-mobile: {{ heading_size_mobile }}px;
+    --tii-heading-color: {{ heading_color }};
+    --tii-heading-lh: {{ heading_line_height }}%;
+    --tii-heading-mb: {{ heading_margin_bottom }}px;
+
+    --tii-text-desktop: {{ text_size_desktop }}px;
+    --tii-text-mobile: {{ text_size_mobile }}px;
+    --tii-text-color: {{ text_color }};
+    --tii-text-mt: {{ text_margin_top }}px;
+
+    --tii-btn-bg: {{ btn_bg }};
+    --tii-btn-text: {{ btn_text }};
+    --tii-btn-bg-hover: {{ btn_bg_hover }};
+    --tii-btn-text-hover: {{ btn_text_hover }};
+    --tii-btn-radius: {{ btn_radius }}px;
+    --tii-btn-height: {{ btn_height }}px;
+    --tii-btn-px: {{ btn_padding_x }}px;
+    --tii-btn-size-desktop: {{ btn_size_desktop }}px;
+    --tii-btn-size-mobile: {{ btn_size_mobile }}px;
+    --tii-btn-mt: {{ button_margin_top }}px;
+  }
+
+  /* =============================================
+     SECTION BASE
+     ============================================= */
+  .schar-tii {
+    background-color: var(--tii-bg);
+    padding: var(--tii-padding-top) var(--header-desktop-padding, 63px) var(--tii-padding-bottom);
+  }
+
+  /* =============================================
+     GRID – CON IMAGEN (2 columnas)
+     ============================================= */
+  .schar-tii__grid--has-image {
+    display: grid;
+    grid-template-columns: var(--tii-image-col) 1fr;
+    gap: var(--tii-gap);
+    align-items: {{ vertical_align }};
+    max-width: 1314px;
+    margin: 0 auto;
+  }
+
+  .schar-tii__grid--has-image.schar-tii__grid--img-right {
+    grid-template-columns: 1fr var(--tii-image-col);
+  }
+
+  .schar-tii__grid--img-right .schar-tii__image-col {
+    order: 2;
+  }
+
+  .schar-tii__grid--img-right .schar-tii__text-col {
+    order: 1;
+  }
+
+  /* Text inner con imagen */
+  .schar-tii__grid--has-image .schar-tii__text-inner {
+    max-width: var(--tii-text-max-width);
+  }
+
+  /* =============================================
+     GRID – SIN IMAGEN (texto centrado)
+     ============================================= */
+  .schar-tii__grid--text-only {
+    display: flex;
+    justify-content: center;
+    max-width: 1314px;
+    margin: 0 auto;
+  }
+
+  .schar-tii__grid--text-only .schar-tii__text-col {
+    width: 100%;
+  }
+
+  .schar-tii__grid--text-only .schar-tii__text-inner {
+    max-width: var(--tii-text-only-max-width);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* =============================================
+     IMAGE COLUMN
+     ============================================= */
+  .schar-tii__image-container {
+    position: relative;
+    width: 100%;
+  }
+
+  .schar-tii__image-wrapper {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .schar-tii__image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  /* =============================================
+     ICONS
+     ============================================= */
+  .schar-tii__icons {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .schar-tii__icon {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: auto;
+    transform: translate(-50%, 0);
+  }
+
+  .schar-tii__icon-img-wrap {
+    width: var(--icon-size, 56px);
+    height: var(--icon-size, 56px);
+    flex-shrink: 0;
+  }
+
+  .schar-tii__icon-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .schar-tii__icon-label {
+    margin-top: 6px;
+    text-align: center;
+    font-family: var(--schar-font-body);
+    font-size: var(--icon-label-size, 14px);
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--icon-text-color);
+    max-width: 120px;
+  }
+
+  /* =============================================
+     TEXT COLUMN
+     ============================================= */
+  .schar-tii__text-col[style*="center"] .schar-tii__text-inner {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .schar-tii__text-col[style*="right"] .schar-tii__text-inner {
+    margin-left: auto;
+  }
+
+  /* Heading */
+  .schar-tii__heading,
+  .schar-tii__heading * {
+    font-family: var(--schar-font-heading) !important;
+    font-style: normal;
+    font-weight: 400 !important;
+    color: var(--tii-heading-color);
+    font-size: clamp(
+      var(--tii-heading-mobile),
+      calc(var(--tii-heading-mobile) + ({{ heading_size_desktop }} - {{ heading_size_mobile }}) * ((100vw - 375px) / (1440 - 375))),
+      var(--tii-heading-desktop)
+    );
+    line-height: var(--tii-heading-lh);
+    margin: 0 0 var(--tii-heading-mb) 0;
+  }
+
+  .schar-tii__heading strong,
+  .schar-tii__heading b {
+    font-weight: 400 !important;
+  }
+
+  /* Text */
+  .schar-tii__text,
+  .schar-tii__text * {
+    font-family: var(--schar-font-body);
+    font-size: clamp(
+      var(--tii-text-mobile),
+      calc(var(--tii-text-mobile) + ({{ text_size_desktop }} - {{ text_size_mobile }}) * ((100vw - 375px) / (1440 - 375))),
+      var(--tii-text-desktop)
+    );
+    line-height: 1.6;
+    color: var(--tii-text-color);
+  }
+
+  .schar-tii__text:not(:first-child) {
+    margin-top: var(--tii-text-mt);
+  }
+
+  /* Button */
+  .schar-tii__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--tii-btn-height);
+    padding: 0 var(--tii-btn-px);
+    background-color: var(--tii-btn-bg);
+    color: var(--tii-btn-text);
+    border: none;
+    border-radius: var(--tii-btn-radius);
+    font-family: var(--schar-font-body);
+    font-size: clamp(
+      var(--tii-btn-size-mobile),
+      calc(var(--tii-btn-size-mobile) + ({{ btn_size_desktop }} - {{ btn_size_mobile }}) * ((100vw - 375px) / (1440 - 375))),
+      var(--tii-btn-size-desktop)
+    );
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: lowercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  }
+
+  .schar-tii__btn-wrap {
+    margin-top: var(--tii-btn-mt);
+  }
+
+  .schar-tii__btn:hover {
+    background-color: var(--tii-btn-bg-hover);
+    color: var(--tii-btn-text-hover);
+    transform: translateY(-1px);
+  }
+
+  .schar-tii__btn:active {
+    transform: translateY(0);
+  }
+
+  /* =============================================
+     RESPONSIVE
+     ============================================= */
+  @media (max-width: 1439px) {
+    .schar-tii {
+      padding-left: var(--header-laptop-padding, 46px);
+      padding-right: var(--header-laptop-padding, 46px);
+    }
+  }
+
+  @media (max-width: 834px) {
+    .schar-tii {
+      padding-left: var(--header-tablet-padding, 46px);
+      padding-right: var(--header-tablet-padding, 46px);
+    }
+  }
+
+  @media (max-width: 680px) {
+    .schar-tii {
+      padding-left: var(--header-mobile-padding, 22px);
+      padding-right: var(--header-mobile-padding, 22px);
+    }
+
+    .schar-tii__grid--has-image,
+    .schar-tii__grid--has-image.schar-tii__grid--img-right {
+      grid-template-columns: 1fr;
+    }
+
+    .schar-tii__text-col {
+      order: -1 !important;
+      text-align: center !important;
+    }
+
+    .schar-tii__text-inner {
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+
+    .schar-tii__image-col {
+      order: 1 !important;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .schar-tii__icon-label {
+      font-size: 11px;
+      max-width: 80px;
+    }
+
+    .schar-tii__icon-img-wrap {
+      width: calc(var(--icon-size, 56px) * 0.7);
+      height: calc(var(--icon-size, 56px) * 0.7);
+    }
+  }
+
+  @media (hover: hover) {
+    .schar-tii__btn:hover {
+      background-color: var(--tii-btn-bg-hover);
+      color: var(--tii-btn-text-hover);
+      transform: translateY(-1px);
+    }
+  }
+
+  /* =============================================
+     ICON BLOCK – per-block variables
+     ============================================= */
+  {%- for block in section.blocks -%}
+    #shopify-section-{{ section.id }} [{{ block.shopify_attributes | split: '"' | first | append: '"' }}] {
+      --icon-size: {{ block.settings.icon_size | default: 56 }}px;
+      --icon-label-size: {{ block.settings.label_size | default: 14 }}px;
+    }
+  {%- endfor -%}
+{% endstyle %}

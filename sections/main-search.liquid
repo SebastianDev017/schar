@@ -1,0 +1,489 @@
+{%- comment -%}
+  Resultados de búsqueda – Dr. Schär México
+  ✔ Campo de búsqueda on-brand (píldora, igual al overlay del header)
+  ✔ Productos → tarjeta Schär (render 'product-card', product: item)
+  ✔ Artículos / páginas → tarjeta de contenido on-brand
+  ✔ Estados: sin búsqueda · sin resultados · con resultados
+  ✔ Paginación de marca
+  ⚠ El botón "Añadir al carrito" de la tarjeta requiere el snippet
+    'schar-card-cart' renderizado UNA vez en theme.liquid (igual que en colección).
+{%- endcomment -%}
+{%- comment -%}theme-check-disable RemoteAsset{%- endcomment -%}
+
+<div class="schar-search-page" id="schar-search-{{ section.id }}">
+
+  {%- comment -%} ════════ ENCABEZADO + CAMPO ════════ {%- endcomment -%}
+  <div class="schar-search-page__head">
+    <p class="schar-search-page__eyebrow">Búsqueda</p>
+    <h1 class="schar-search-page__title">
+      {%- if search.performed -%}Resultados de búsqueda{%- else -%}¿Qué estás buscando?{%- endif -%}
+    </h1>
+
+    <form action="{{ routes.search_url }}" method="get" role="search" class="schar-search-page__form">
+      <input type="hidden" name="options[prefix]" value="last">
+      <svg class="schar-search-page__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input
+        class="schar-search-page__input"
+        id="schar-search-input-{{ section.id }}"
+        type="search"
+        name="q"
+        value="{{ search.terms | escape }}"
+        placeholder="Buscar productos sin gluten..."
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+        aria-label="Buscar"
+      >
+      <button type="submit" class="schar-search-page__submit" aria-label="Buscar">Buscar</button>
+    </form>
+
+    {%- if search.performed and search.results_count > 0 -%}
+      <p class="schar-search-page__count" role="status">
+        {{ search.results_count }} resultado{% if search.results_count != 1 %}s{% endif %} para
+        <strong>&ldquo;{{ search.terms | escape }}&rdquo;</strong>
+      </p>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} ════════ RESULTADOS ════════ {%- endcomment -%}
+  {%- if search.performed and search.results.size > 0 -%}
+    {% paginate search.results by 24 %}
+      <div class="schar-search-page__results">
+        <ul class="schar-search-results__grid" role="list">
+          {%- for item in search.results -%}
+            <li class="schar-search-results__item">
+              {%- case item.object_type -%}
+
+                {%- when 'product' -%}
+                  {%- assign product = item -%}
+                  {%- render 'product-card', product: product -%}
+
+                {%- when 'article' -%}
+                  <a href="{{ item.url }}" class="schar-content-card">
+                    {%- if item.image -%}
+                      <div class="schar-content-card__media">
+                        <img src="{{ item.image | image_url: width: 600 }}" alt="{{ item.image.alt | escape }}" loading="lazy">
+                      </div>
+                    {%- else -%}
+                      <div class="schar-content-card__media schar-content-card__media--empty">
+                        <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+                      </div>
+                    {%- endif -%}
+                    <div class="schar-content-card__body">
+                      <span class="schar-content-card__badge">Artículo</span>
+                      <h2 class="schar-content-card__title">{{ item.title | truncate: 60 | escape }}</h2>
+                      {%- if section.settings.article_show_date or section.settings.article_show_author -%}
+                        <p class="schar-content-card__meta">
+                          {%- if section.settings.article_show_date -%}{{ item.published_at | date: '%d %b %Y' }}{%- endif -%}
+                          {%- if section.settings.article_show_date and section.settings.article_show_author %} · {% endif -%}
+                          {%- if section.settings.article_show_author -%}{{ item.author }}{%- endif -%}
+                        </p>
+                      {%- endif -%}
+                      <span class="schar-content-card__link">Leer más</span>
+                    </div>
+                  </a>
+
+                {%- when 'page' -%}
+                  <a href="{{ item.url }}" class="schar-content-card schar-content-card--page">
+                    <div class="schar-content-card__media schar-content-card__media--empty">
+                      <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    </div>
+                    <div class="schar-content-card__body">
+                      <span class="schar-content-card__badge">Página</span>
+                      <h2 class="schar-content-card__title">{{ item.title | truncate: 60 | escape }}</h2>
+                      <span class="schar-content-card__link">Ver página</span>
+                    </div>
+                  </a>
+
+              {%- endcase -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        {%- if paginate.pages > 1 -%}
+          <nav class="schar-pagination" role="navigation" aria-label="Paginación de resultados">
+            {%- if paginate.previous -%}
+              <a href="{{ paginate.previous.url }}" class="schar-pagination__btn" rel="prev">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span>Anterior</span>
+              </a>
+            {%- endif -%}
+            <span class="schar-pagination__status">Página {{ paginate.current_page }} de {{ paginate.pages }}</span>
+            {%- if paginate.next -%}
+              <a href="{{ paginate.next.url }}" class="schar-pagination__btn" rel="next">
+                <span>Siguiente</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            {%- endif -%}
+          </nav>
+        {%- endif -%}
+      </div>
+    {% endpaginate %}
+
+  {%- comment -%} ════════ SIN RESULTADOS ════════ {%- endcomment -%}
+  {%- elsif search.performed -%}
+    <div class="schar-search-page__empty">
+      <div class="schar-search-page__empty-icon">
+        <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+      </div>
+      <h2 class="schar-search-page__empty-title">No encontramos resultados para &ldquo;{{ search.terms | escape }}&rdquo;</h2>
+      <p class="schar-search-page__empty-text">Revisa la ortografía o intenta con palabras más generales, como el tipo de producto o categoría.</p>
+      <a href="{{ routes.all_products_collection_url }}" class="schar-search-page__empty-btn">Ver todos los productos</a>
+    </div>
+
+  {%- comment -%} ════════ SIN BÚSQUEDA AÚN ════════ {%- endcomment -%}
+  {%- else -%}
+    <div class="schar-search-page__hint">
+      <p>Escribe el nombre de un producto, categoría o ingrediente para empezar.</p>
+    </div>
+  {%- endif -%}
+
+</div>
+
+{% style %}
+  @font-face {
+    font-family: 'Times ExtraBold';
+    src: url('https://cdn.shopify.com/s/files/1/0991/5082/3710/files/Times-ExtraBold.otf?v=1777160115') format('opentype');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  #shopify-section-{{ section.id }} {
+    --schar-dark: #2C1A0E;
+    --schar-red: #C41E3A;
+    --schar-beige: #E8DDD0;
+    --schar-beige-light: #F5F0EB;
+    --schar-border: #D5CBC0;
+    --schar-muted: #8A7A6C;
+    --schar-font-heading: 'Times ExtraBold', 'Playfair Display', serif;
+    --schar-font-body: 'Cabin', 'Inter', sans-serif;
+  }
+
+  .schar-search-page {
+    background-color: var(--schar-beige);
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: clip;
+    padding-bottom: 80px;
+  }
+
+  /* ── Encabezado + campo ── */
+  .schar-search-page__head {
+    max-width: 680px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 56px var(--header-mobile-padding, 22px) 0;
+  }
+  .schar-search-page__eyebrow {
+    margin: 0 0 8px 0;
+    font-family: var(--schar-font-body);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--schar-red);
+  }
+  .schar-search-page__title {
+    margin: 0;
+    font-family: var(--schar-font-heading);
+    font-size: clamp(28px, calc(28px + (44 - 28) * ((100vw - 375px) / (1440 - 375))), 44px);
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--schar-dark);
+  }
+
+  .schar-search-page__form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 560px;
+    margin: 26px auto 0;
+    padding: 6px 6px 6px 20px;
+    background-color: #FFFFFF;
+    border: 1px solid var(--schar-border);
+    border-radius: 50px;
+    box-shadow: 0 4px 16px rgba(44, 26, 14, 0.06);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .schar-search-page__form:focus-within {
+    border-color: var(--schar-dark);
+    box-shadow: 0 6px 20px rgba(44, 26, 14, 0.1);
+  }
+  .schar-search-page__icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--schar-muted);
+  }
+  .schar-search-page__input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--schar-font-body);
+    font-size: 16px;
+    color: var(--schar-dark);
+    padding: 11px 0;
+  }
+  .schar-search-page__input::placeholder { color: var(--schar-muted); }
+  .schar-search-page__submit {
+    flex-shrink: 0;
+    padding: 12px 26px;
+    background-color: var(--schar-dark);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 50px;
+    font-family: var(--schar-font-body);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  .schar-search-page__submit:hover { background-color: var(--schar-red); }
+
+  .schar-search-page__count {
+    margin: 20px 0 0 0;
+    font-family: var(--schar-font-body);
+    font-size: 15px;
+    color: var(--schar-muted);
+  }
+  .schar-search-page__count strong { color: var(--schar-dark); font-weight: 700; }
+
+  /* ── Grid de resultados ── */
+  .schar-search-page__results {
+    max-width: 1400px;
+    margin: 44px auto 0;
+    padding: 0 var(--header-mobile-padding, 22px);
+  }
+  .schar-search-results__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .schar-search-results__item { min-width: 0; }
+
+  /* ── Tarjeta de contenido (artículo / página) ── */
+  .schar-content-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #FFFFFF;
+    border: 1px solid rgba(44, 26, 14, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .schar-content-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(44, 26, 14, 0.12);
+  }
+  .schar-content-card__media {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background-color: var(--schar-beige-light);
+  }
+  .schar-content-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .schar-content-card__media--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--schar-muted);
+  }
+  .schar-content-card__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 18px 20px 20px;
+    flex: 1;
+  }
+  .schar-content-card__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    background-color: var(--schar-beige-light);
+    border: 1px solid var(--schar-border);
+    border-radius: 50px;
+    font-family: var(--schar-font-body);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--schar-muted);
+  }
+  .schar-content-card__title {
+    margin: 0;
+    font-family: var(--schar-font-body);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--schar-dark);
+  }
+  .schar-content-card__meta {
+    margin: 0;
+    font-family: var(--schar-font-body);
+    font-size: 13px;
+    color: var(--schar-muted);
+  }
+  .schar-content-card__link {
+    margin-top: auto;
+    font-family: var(--schar-font-body);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--schar-red);
+  }
+
+  /* ── Paginación ── */
+  .schar-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 48px;
+    flex-wrap: wrap;
+  }
+  .schar-pagination__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    background-color: #FFFFFF;
+    border: 1px solid var(--schar-border);
+    border-radius: 50px;
+    font-family: var(--schar-font-body);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--schar-dark);
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .schar-pagination__btn:hover {
+    background-color: var(--schar-dark);
+    border-color: var(--schar-dark);
+    color: #FFFFFF;
+  }
+  .schar-pagination__status {
+    font-family: var(--schar-font-body);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--schar-muted);
+  }
+
+  /* ── Sin resultados ── */
+  .schar-search-page__empty {
+    max-width: 520px;
+    margin: 48px auto 0;
+    padding: 0 var(--header-mobile-padding, 22px);
+    text-align: center;
+  }
+  .schar-search-page__empty-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 84px;
+    height: 84px;
+    margin-bottom: 20px;
+    background-color: #FFFFFF;
+    border-radius: 50%;
+    color: var(--schar-muted);
+    box-shadow: 0 6px 20px rgba(44, 26, 14, 0.08);
+  }
+  .schar-search-page__empty-title {
+    margin: 0 0 10px 0;
+    font-family: var(--schar-font-body);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--schar-dark);
+  }
+  .schar-search-page__empty-text {
+    margin: 0 0 24px 0;
+    font-family: var(--schar-font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--schar-muted);
+  }
+  .schar-search-page__empty-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 30px;
+    background-color: var(--schar-dark);
+    color: #FFFFFF;
+    border-radius: 50px;
+    font-family: var(--schar-font-body);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+  .schar-search-page__empty-btn:hover { background-color: var(--schar-red); }
+
+  /* ── Sin búsqueda aún ── */
+  .schar-search-page__hint {
+    max-width: 480px;
+    margin: 36px auto 60px;
+    padding: 0 var(--header-mobile-padding, 22px);
+    text-align: center;
+  }
+  .schar-search-page__hint p {
+    margin: 0;
+    font-family: var(--schar-font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--schar-muted);
+  }
+
+  /* =============================================
+     RESPONSIVE
+     ============================================= */
+  @media (min-width: 681px) {
+    .schar-search-results__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
+    .schar-search-page__results { padding: 0 var(--header-laptop-padding, 46px); }
+    .schar-search-page__head { padding-top: 70px; }
+  }
+  @media (min-width: 1140px) {
+    .schar-search-results__grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 26px;
+    }
+    .schar-search-page__results { padding: 0 var(--header-desktop-padding, 63px); }
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Búsqueda Schär",
+  "tag": "section",
+  "class": "schar-search-section",
+  "settings": [
+    { "type": "header", "content": "Resultados de búsqueda" },
+    { "type": "paragraph", "content": "Los productos se muestran con la tarjeta Schär. Requiere el snippet 'schar-card-cart' renderizado una vez en theme.liquid (igual que en la colección) para que funcione Añadir al carrito." },
+    { "type": "header", "content": "Artículos del blog" },
+    { "type": "checkbox", "id": "article_show_date", "label": "Mostrar fecha", "default": true },
+    { "type": "checkbox", "id": "article_show_author", "label": "Mostrar autor", "default": false }
+  ]
+}
+{% endschema %}

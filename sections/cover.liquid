@@ -1,0 +1,940 @@
+{%- comment -%}
+  Section 2: Hero Full-Width – Dr. Schär México
+  MÁXIMA PERSONALIZACIÓN desde el admin de Shopify
+  ✔ Tipografías: tamaño mobile + desktop para título, subtítulo, párrafo
+  ✔ Colores: título, subtítulo, párrafo, overlay, botón (bg, texto, hover)
+  ✔ Layout: posición 9 puntos, alineación texto, ancho del contenido
+  ✔ Sección: altura desktop/mobile, overlay opacidad
+  ✔ Botón: colores, border-radius, tamaño, spacing
+  ✔ Heading tag: H1–H6
+  ✔ Font: Times ExtraBold desde CDN
+{%- endcomment -%}
+
+{{- 'css-cover.css' | asset_url | stylesheet_tag -}}
+<script src="{{- 'js-cover.js' | asset_url -}}" defer></script>
+
+{%- liquid
+  assign block = section.blocks[0]
+  assign block_type = block.type
+  assign title = block.settings.title
+  assign subtitle = block.settings.subtitle
+  assign button_label = block.settings.button_label
+  assign button_link = block.settings.button_link
+  assign heading_tag = section.settings.heading_tag | default: 'h2'
+  assign content_position = section.settings.content_position | default: 'center-left'
+  assign text_alignment = section.settings.text_alignment | default: 'left'
+
+  assign position_parts = content_position | split: '-'
+  assign pos_vertical = position_parts[0]
+  assign pos_horizontal = position_parts[1]
+
+  assign button_exists = false
+  if button_label != blank and button_link != blank
+    assign button_exists = true
+  endif
+
+  comment
+    Tamaños de fuente
+  endcomment
+  assign title_size_desktop = section.settings.title_size_desktop | default: 72
+  assign title_size_mobile = section.settings.title_size_mobile | default: 36
+  assign subtitle_size_desktop = section.settings.subtitle_size_desktop | default: 13
+  assign subtitle_size_mobile = section.settings.subtitle_size_mobile | default: 11
+  assign paragraph_size_desktop = section.settings.paragraph_size_desktop | default: 18
+  assign paragraph_size_mobile = section.settings.paragraph_size_mobile | default: 14
+  assign button_size_desktop = section.settings.button_size_desktop | default: 13
+  assign button_size_mobile = section.settings.button_size_mobile | default: 12
+
+  comment
+    Colores
+  endcomment
+  assign title_color = section.settings.title_color | default: '#FFFFFF'
+  assign subtitle_color = section.settings.subtitle_color | default: '#F5C842'
+  assign paragraph_color = section.settings.paragraph_color | default: '#FFFFFFE6'
+  assign overlay_color = section.settings.overlay_color | default: '#2C1A0E'
+  assign overlay_opacity = section.settings.overlay_opacity | default: 50
+  assign overlay_opacity_decimal = overlay_opacity | divided_by: 100.0
+
+  comment
+    Botón
+  endcomment
+  assign btn_bg = section.settings.button_bg_color | default: '#E8DDD0'
+  assign btn_text = section.settings.button_text_color | default: '#2C1A0E'
+  assign btn_bg_hover = section.settings.button_bg_hover | default: '#2C1A0E'
+  assign btn_text_hover = section.settings.button_text_hover | default: '#FFFFFF'
+  assign btn_radius = section.settings.button_border_radius | default: 50
+  assign btn_height = section.settings.button_height | default: 48
+  assign btn_padding_x = section.settings.button_padding_x | default: 32
+
+  comment
+    Layout
+  endcomment
+  assign content_max_width = section.settings.content_max_width | default: 540
+  assign section_height_desktop = section.settings.section_height_desktop | default: 100
+  assign section_height_mobile = section.settings.section_height_mobile | default: 85
+  assign section_max_height = section.settings.section_max_height | default: 800
+  assign padding_top = section.settings.padding_top | default: 60
+  assign padding_bottom = section.settings.padding_bottom | default: 60
+
+  comment
+    Spacing
+  endcomment
+  assign subtitle_margin_bottom = section.settings.subtitle_margin_bottom | default: 12
+  assign title_margin_bottom = section.settings.title_margin_bottom | default: 0
+  assign paragraph_margin_top = section.settings.paragraph_margin_top | default: 16
+  assign button_margin_top = section.settings.button_margin_top | default: 32
+
+  comment
+    Title line height
+  endcomment
+  assign title_line_height = section.settings.title_line_height | default: 105
+-%}
+
+{%- capture open_tag -%}
+  {%- if button_label == blank and button_link != blank -%}
+    <a class="cover-content" href="{{ button_link }}">
+  {%- else -%}
+    <div class="cover-content">
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- capture close_tag -%}
+  {%- if button_label == blank and button_link != blank -%}
+    </a>
+  {%- else -%}
+    </div>
+  {%- endif -%}
+{%- endcapture -%}
+
+<div class="cover-wrapper">
+  <div
+    class="cover block-type-{{ block_type }}"
+    data-section-id="{{ section.id }}"
+    data-section-type="cover"
+  >
+    {{ open_tag }}
+
+      {%- unless section.settings.float_asset == blank -%}
+        <div class="cover-asset no-touch">
+          <div class="cover-asset-image-wrapper">
+            <img class="cover-asset-image" src="{{ section.settings.float_asset | image_url }}" alt="{{ section.settings.float_asset.alt | escape }}" fetchpriority="high" data-aos="fade-up" data-aos-delay="300">
+          </div>
+        </div>
+      {%- endunless -%}
+
+      {%- case block_type -%}
+        {%- when 'image' -%}
+          <div class="cover-background cover-background--image">
+            <div class="cover-overlay" style="background: rgba({{ overlay_color | remove: '#' | slice: 0, 2 | prepend: '0x' | plus: 0 }}, {{ overlay_color | remove: '#' | slice: 2, 2 | prepend: '0x' | plus: 0 }}, {{ overlay_color | remove: '#' | slice: 4, 2 | prepend: '0x' | plus: 0 }}, {{ overlay_opacity_decimal }});"></div>
+            <picture>
+              {%- if block.settings.mobile_image != blank -%}
+                <source media="(max-width: 680px)" srcset="{{ block.settings.mobile_image | image_url }}">
+              {%- endif -%}
+              {%- if block.settings.desktop_image != blank -%}
+                <img src="{{ block.settings.desktop_image | image_url }}" alt="{{ title | strip_html | escape | default: 'Portada' }}" fetchpriority="high">
+              {%- endif -%}
+            </picture>
+          </div>
+
+        {%- when 'video' -%}
+          <div class="cover-background cover-background--image">
+            <div class="cover-overlay" style="background: rgba({{ overlay_color | remove: '#' | slice: 0, 2 | prepend: '0x' | plus: 0 }}, {{ overlay_color | remove: '#' | slice: 2, 2 | prepend: '0x' | plus: 0 }}, {{ overlay_color | remove: '#' | slice: 4, 2 | prepend: '0x' | plus: 0 }}, {{ overlay_opacity_decimal }});"></div>
+            {%- if block.settings.video_desktop != blank -%}
+              {{ block.settings.video_desktop | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, class: 'cover-video', preload: 'auto' }}
+            {%- endif -%}
+          </div>
+      {%- endcase -%}
+
+      <article
+        class="cover-info schar-pos-v--{{ pos_vertical }} schar-pos-h--{{ pos_horizontal }}"
+        style="text-align: {{ text_alignment }};"
+        data-aos="fade-up"
+      >
+        <div class="cover-info-inner">
+
+          {%- unless subtitle == blank -%}
+            <p class="schar-cover-subtitle">{{ subtitle }}</p>
+          {%- endunless -%}
+
+          {%- unless title == blank -%}
+            <header class="cover-title-container">
+              <{{ heading_tag }} class="schar-cover-title">{{ title }}</{{ heading_tag }}>
+            </header>
+          {%- endunless -%}
+
+          {%- unless block.settings.text_paragraph == blank -%}
+            <p class="schar-cover-text">{{ block.settings.text_paragraph }}</p>
+          {%- endunless -%}
+
+          {%- if button_exists -%}
+            <div class="cover-button-container">
+              <a
+                class="schar-cover-btn"
+                href="{{ button_link }}"
+                {%- if button_link contains 'http' or button_link contains 'mailto:' %} target="_blank" rel="noopener"{% endif -%}
+              >
+                {{ button_label }}
+              </a>
+            </div>
+          {%- endif -%}
+
+        </div>
+      </article>
+
+      {%- unless section.settings.bottom_paragraph == blank -%}
+        <p class="schar-cover-bottom">{{ section.settings.bottom_paragraph }}</p>
+      {%- endunless -%}
+
+    {{ close_tag }}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Portada Hero",
+  "tag": "section",
+  "class": "cover-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "── LAYOUT ──"
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "label": "Posición del contenido",
+      "default": "center-left",
+      "options": [
+        { "value": "top-left", "label": "Arriba – Izquierda" },
+        { "value": "top-center", "label": "Arriba – Centro" },
+        { "value": "top-right", "label": "Arriba – Derecha" },
+        { "value": "center-left", "label": "Centro – Izquierda" },
+        { "value": "center-center", "label": "Centro – Centro" },
+        { "value": "center-right", "label": "Centro – Derecha" },
+        { "value": "bottom-left", "label": "Abajo – Izquierda" },
+        { "value": "bottom-center", "label": "Abajo – Centro" },
+        { "value": "bottom-right", "label": "Abajo – Derecha" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alineación del texto",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del contenido (px)",
+      "min": 280,
+      "max": 900,
+      "step": 10,
+      "default": 540,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── SECCIÓN ──"
+    },
+    {
+      "type": "range",
+      "id": "section_height_desktop",
+      "label": "Altura desktop (vh)",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "default": 100,
+      "unit": "vh"
+    },
+    {
+      "type": "range",
+      "id": "section_height_mobile",
+      "label": "Altura mobile (vh)",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "default": 85,
+      "unit": "vh"
+    },
+    {
+      "type": "range",
+      "id": "section_max_height",
+      "label": "Altura máxima (px)",
+      "min": 400,
+      "max": 1200,
+      "step": 50,
+      "default": 800,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding superior (px)",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding inferior (px)",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── OVERLAY ──"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Color del overlay",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Opacidad del overlay (%)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 50,
+      "unit": "%"
+    },
+    {
+      "type": "header",
+      "content": "── TÍTULO ──"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Etiqueta HTML (SEO)",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Tamaño título desktop (px)",
+      "min": 24,
+      "max": 120,
+      "step": 2,
+      "default": 72,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Tamaño título mobile (px)",
+      "min": 20,
+      "max": 72,
+      "step": 2,
+      "default": 36,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "title_line_height",
+      "label": "Line-height título (%)",
+      "min": 80,
+      "max": 160,
+      "step": 5,
+      "default": 105,
+      "unit": "%"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "title_margin_bottom",
+      "label": "Margen inferior título (px)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── SUBTÍTULO ──"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_desktop",
+      "label": "Tamaño subtítulo desktop (px)",
+      "min": 10,
+      "max": 30,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_mobile",
+      "label": "Tamaño subtítulo mobile (px)",
+      "min": 9,
+      "max": 24,
+      "step": 1,
+      "default": 11,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Color del subtítulo",
+      "default": "#F5C842"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_margin_bottom",
+      "label": "Margen inferior subtítulo (px)",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── PÁRRAFO ──"
+    },
+    {
+      "type": "range",
+      "id": "paragraph_size_desktop",
+      "label": "Tamaño párrafo desktop (px)",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "paragraph_size_mobile",
+      "label": "Tamaño párrafo mobile (px)",
+      "min": 11,
+      "max": 22,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "paragraph_color",
+      "label": "Color del párrafo",
+      "default": "#FFFFFFE6"
+    },
+    {
+      "type": "range",
+      "id": "paragraph_margin_top",
+      "label": "Margen superior párrafo (px)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── BOTÓN ──"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Color de fondo",
+      "default": "#E8DDD0"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Color de texto",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_hover",
+      "label": "Color de fondo (hover)",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "color",
+      "id": "button_text_hover",
+      "label": "Color de texto (hover)",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Border radius (px)",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_height",
+      "label": "Altura del botón (px)",
+      "min": 32,
+      "max": 72,
+      "step": 2,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_padding_x",
+      "label": "Padding horizontal (px)",
+      "min": 12,
+      "max": 60,
+      "step": 2,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_size_desktop",
+      "label": "Tamaño texto botón desktop (px)",
+      "min": 10,
+      "max": 22,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_size_mobile",
+      "label": "Tamaño texto botón mobile (px)",
+      "min": 9,
+      "max": 18,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_margin_top",
+      "label": "Margen superior botón (px)",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "── IMAGEN FLOTANTE ──"
+    },
+    {
+      "type": "image_picker",
+      "id": "float_asset",
+      "label": "Imagen flotante (opcional)"
+    },
+    {
+      "type": "header",
+      "content": "── TEXTO INFERIOR ──"
+    },
+    {
+      "type": "text",
+      "id": "bottom_paragraph",
+      "label": "Texto inferior del banner"
+    }
+  ],
+  "max_blocks": 1,
+  "blocks": [
+    {
+      "name": "Imagen",
+      "type": "image",
+      "settings": [
+        { "type": "image_picker", "id": "desktop_image", "label": "Imagen escritorio" },
+        { "type": "image_picker", "id": "mobile_image", "label": "Imagen móvil" },
+        { "type": "text", "id": "subtitle", "label": "Subtítulo" },
+        { "type": "richtext", "id": "title", "label": "Título", "default": "<p>hazlo con<br><strong>lo mejor de<br>nosotros</strong></p>" },
+        { "type": "text", "id": "text_paragraph", "label": "Párrafo descriptivo" },
+        { "type": "text", "id": "button_label", "label": "Texto del botón", "default": "Conoce más de Schär" },
+        { "type": "url", "id": "button_link", "label": "Enlace del botón" }
+      ]
+    },
+    {
+      "name": "Video",
+      "type": "video",
+      "settings": [
+        { "type": "video", "id": "video_desktop", "label": "Video escritorio" },
+        { "type": "text", "id": "subtitle", "label": "Subtítulo" },
+        { "type": "richtext", "id": "title", "label": "Título", "default": "<p>hazlo con<br><strong>lo mejor de<br>nosotros</strong></p>" },
+        { "type": "text", "id": "text_paragraph", "label": "Párrafo descriptivo" },
+        { "type": "text", "id": "button_label", "label": "Texto del botón", "default": "Conoce más de Schär" },
+        { "type": "url", "id": "button_link", "label": "Enlace del botón" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Portada Hero", "category": "Homepage" }
+  ]
+}
+{% endschema %}
+
+{% style %}
+  /* =============================================
+     FONT: Times ExtraBold
+     ============================================= */
+  @font-face {
+    font-family: 'Times ExtraBold';
+    src: url('https://cdn.shopify.com/s/files/1/0991/5082/3710/files/Times-ExtraBold.otf?v=1777160115') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* =============================================
+     VARIABLES – inyectadas desde schema
+     ============================================= */
+  #shopify-section-{{ section.id }} {
+    --schar-font-heading: 'Times ExtraBold', 'Playfair Display', serif;
+    --schar-font-body: 'Inter', 'Poppins', sans-serif;
+
+    /* Título */
+    --title-size-desktop: {{ title_size_desktop }}px;
+    --title-size-mobile: {{ title_size_mobile }}px;
+    --title-color: {{ title_color }};
+    --title-line-height: {{ title_line_height }}%;
+    --title-margin-bottom: {{ title_margin_bottom }}px;
+
+    /* Subtítulo */
+    --subtitle-size-desktop: {{ subtitle_size_desktop }}px;
+    --subtitle-size-mobile: {{ subtitle_size_mobile }}px;
+    --subtitle-color: {{ subtitle_color }};
+    --subtitle-margin-bottom: {{ subtitle_margin_bottom }}px;
+
+    /* Párrafo */
+    --paragraph-size-desktop: {{ paragraph_size_desktop }}px;
+    --paragraph-size-mobile: {{ paragraph_size_mobile }}px;
+    --paragraph-color: {{ paragraph_color }};
+    --paragraph-margin-top: {{ paragraph_margin_top }}px;
+
+    /* Botón */
+    --btn-bg: {{ btn_bg }};
+    --btn-text: {{ btn_text }};
+    --btn-bg-hover: {{ btn_bg_hover }};
+    --btn-text-hover: {{ btn_text_hover }};
+    --btn-radius: {{ btn_radius }}px;
+    --btn-height: {{ btn_height }}px;
+    --btn-padding-x: {{ btn_padding_x }}px;
+    --btn-size-desktop: {{ button_size_desktop }}px;
+    --btn-size-mobile: {{ button_size_mobile }}px;
+    --btn-margin-top: {{ button_margin_top }}px;
+
+    /* Layout */
+    --content-max-width: {{ content_max_width }}px;
+    --section-height-desktop: {{ section_height_desktop }}vh;
+    --section-height-mobile: {{ section_height_mobile }}vh;
+    --section-max-height: {{ section_max_height }}px;
+    --cover-padding-top: {{ padding_top }}px;
+    --cover-padding-bottom: {{ padding_bottom }}px;
+  }
+
+  /* =============================================
+     BASE
+     ============================================= */
+  .cover-wrapper {
+    position: relative;
+    z-index: 10;
+  }
+
+  .cover {
+    position: relative;
+  }
+
+  .cover-background--image {
+    position: relative;
+    width: 100%;
+    height: var(--section-height-desktop);
+    max-height: var(--section-max-height);
+    overflow: hidden;
+  }
+
+  .cover-background--image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .cover-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+  }
+
+  .cover-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .cover-content {
+    position: relative;
+    z-index: 2;
+    display: block;
+  }
+
+  /* =============================================
+     POSICIONAMIENTO 9 PUNTOS
+     ============================================= */
+  .cover-info {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    padding: var(--cover-padding-top) var(--header-desktop-padding, 63px) var(--cover-padding-bottom);
+    overflow: hidden;
+    z-index: 2;
+    box-sizing: border-box;
+  }
+
+  .cover-info.schar-pos-v--top    { align-items: flex-start; }
+  .cover-info.schar-pos-v--center { align-items: center; }
+  .cover-info.schar-pos-v--bottom { align-items: flex-end; }
+
+  .cover-info.schar-pos-h--left   { justify-content: flex-start; }
+  .cover-info.schar-pos-h--center { justify-content: center; }
+  .cover-info.schar-pos-h--right  { justify-content: flex-end; }
+
+  .cover-info-inner {
+    width: var(--content-max-width);
+    max-width: 100%;
+  }
+
+  .schar-pos-h--center .cover-info-inner { text-align: center; }
+  .schar-pos-h--right .cover-info-inner  { text-align: right; }
+
+  /* =============================================
+     SUBTÍTULO
+     ============================================= */
+  .schar-cover-subtitle {
+    font-family: var(--schar-font-body);
+    font-size: clamp(var(--subtitle-size-mobile), calc(var(--subtitle-size-mobile) + ({{ subtitle_size_desktop }} - {{ subtitle_size_mobile }}) * ((100vw - 375px) / (1440 - 375))), var(--subtitle-size-desktop));
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: lowercase;
+    color: var(--subtitle-color);
+    margin-bottom: var(--subtitle-margin-bottom);
+  }
+
+  /* =============================================
+     TÍTULO – Times ExtraBold
+     ============================================= */
+  .schar-cover-title,
+  .schar-cover-title * {
+    font-family: var(--schar-font-heading) !important;
+    font-style: normal;
+    font-weight: 400 !important;
+    color: var(--title-color);
+    font-size: clamp(var(--title-size-mobile), calc(var(--title-size-mobile) + ({{ title_size_desktop }} - {{ title_size_mobile }}) * ((100vw - 375px) / (1440 - 375))), var(--title-size-desktop));
+    line-height: var(--title-line-height);
+    margin: 0 0 var(--title-margin-bottom) 0;
+  }
+
+  .schar-cover-title strong,
+  .schar-cover-title strong *,
+  .schar-cover-title b,
+  .schar-cover-title b * {
+    font-weight: 400 !important;
+    font-style: normal;
+  }
+
+  .cover-subtitle + .cover-title-container {
+    margin-top: 0;
+  }
+
+  /* =============================================
+     PÁRRAFO
+     ============================================= */
+  .schar-cover-text {
+    margin-top: var(--paragraph-margin-top);
+    font-family: var(--schar-font-body);
+    font-size: clamp(var(--paragraph-size-mobile), calc(var(--paragraph-size-mobile) + ({{ paragraph_size_desktop }} - {{ paragraph_size_mobile }}) * ((100vw - 375px) / (1440 - 375))), var(--paragraph-size-desktop));
+    line-height: 1.6;
+    color: var(--paragraph-color);
+  }
+
+  /* =============================================
+     BOTÓN
+     ============================================= */
+  .schar-cover-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--btn-height);
+    padding: 0 var(--btn-padding-x);
+    background-color: var(--btn-bg);
+    color: var(--btn-text);
+    border: none;
+    border-radius: var(--btn-radius);
+    font-family: var(--schar-font-body);
+    font-size: clamp(var(--btn-size-mobile), calc(var(--btn-size-mobile) + ({{ button_size_desktop }} - {{ button_size_mobile }}) * ((100vw - 375px) / (1440 - 375))), var(--btn-size-desktop));
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: lowercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  }
+
+  .schar-cover-btn:hover {
+    background-color: var(--btn-bg-hover);
+    color: var(--btn-text-hover);
+    transform: translateY(-1px);
+  }
+
+  .schar-cover-btn:active {
+    transform: translateY(0);
+  }
+
+  .cover-button-container:not(:first-child) {
+    margin-top: var(--btn-margin-top);
+  }
+
+  /* =============================================
+     TEXTO INFERIOR + FLOAT ASSET
+     ============================================= */
+  .schar-cover-bottom {
+    position: absolute;
+    bottom: 32px;
+    left: 0;
+    width: 100%;
+    z-index: 2;
+    text-align: center;
+    font-family: var(--schar-font-body);
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .cover-section.with-float-asset .cover-asset { opacity: 1; }
+  .cover-section.with-float-asset + .shopify-section .section:before {
+    content: "";
+    display: none;
+    width: 100%;
+    height: 111px;
+    background: var(--background-color);
+  }
+
+  .cover-asset {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 3;
+    opacity: 0;
+    width: 100%;
+  }
+
+  .cover-asset-image-wrapper {
+    position: absolute;
+    right: var(--header-desktop-padding, 63px);
+    bottom: -58px;
+    width: clamp(248px, calc(248px + (321 - 248) * ((100vw - 1024px) / (1440 - 1024))), 321px);
+    height: clamp(326px, calc(326px + (422 - 326) * ((100vw - 1024px) / (1440 - 1024))), 422px);
+  }
+
+  .cover-asset-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: bottom;
+  }
+
+  /* =============================================
+     RESPONSIVE
+     ============================================= */
+  @media (max-width: 1439px) {
+    .cover-info {
+      padding-left: var(--header-laptop-padding, 46px);
+      padding-right: var(--header-laptop-padding, 46px);
+    }
+    .cover-asset-image-wrapper {
+      right: var(--header-laptop-padding, 46px);
+    }
+  }
+
+  @media (max-width: 834px) {
+    .cover-info {
+      padding-left: var(--header-tablet-padding, 46px);
+      padding-right: var(--header-tablet-padding, 46px);
+    }
+    .cover-info-inner {
+      width: min(var(--content-max-width), 380px);
+    }
+    .cover-asset-image-wrapper {
+      bottom: -35px;
+      width: clamp(147px, calc(147px + (192 - 147) * ((100vw - 680px) / (834 - 680))), 192px);
+      height: clamp(193px, calc(193px + (252 - 193) * ((100vw - 680px) / (834 - 680))), 252px);
+    }
+  }
+
+  @media (max-width: 680px) {
+    .cover-background--image {
+      height: var(--section-height-mobile);
+      max-height: calc(var(--section-max-height) - 150px);
+    }
+
+    .cover-info {
+      padding-left: var(--header-mobile-padding, 22px);
+      padding-right: var(--header-mobile-padding, 22px);
+    }
+
+    .cover-info-inner {
+      width: 100%;
+    }
+
+    .cover-asset-image-wrapper {
+      right: 50%;
+      bottom: -132px;
+      transform: translateX(50%);
+    }
+
+    .schar-cover-bottom {
+      bottom: 20px;
+      font-size: 13px;
+    }
+
+    .cover-section.with-float-asset + .shopify-section .section:before {
+      display: block;
+    }
+  }
+
+  @media (hover: hover) {
+    .schar-cover-btn:hover {
+      background-color: var(--btn-bg-hover);
+      color: var(--btn-text-hover);
+      transform: translateY(-1px);
+    }
+  }
+{% endstyle %}

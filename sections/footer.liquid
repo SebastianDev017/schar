@@ -1,0 +1,801 @@
+{%- comment -%}
+  Footer – Schar México
+  ✔ Mobile-first
+  ✔ 2 columnas de menú + newsletter + social + legales + copyright
+  ✔ Formulario de newsletter nativo Shopify
+  ✔ Máxima personalización (30+ controles)
+  ✔ Times ExtraBold headings, Inter body
+{%- endcomment -%}
+
+{%- liquid
+  assign legal_menu = section.settings.legal_menu
+  assign legal_menu_links = linklists[legal_menu].links
+  assign copyright_text = section.settings.copyright_text | default: shop.name
+  assign bg_color = section.settings.bg_color | default: '#F5C842'
+  assign text_color = section.settings.text_color | default: '#2C1A0E'
+  assign link_color = section.settings.link_color | default: '#2C1A0E'
+  assign link_hover_color = section.settings.link_hover_color | default: '#C41E3A'
+  assign heading_color = section.settings.heading_color | default: '#2C1A0E'
+  assign input_bg = section.settings.input_bg_color | default: '#FFFFFF'
+  assign input_text = section.settings.input_text_color | default: '#2C1A0E'
+  assign btn_bg = section.settings.button_bg_color | default: '#6D6560'
+  assign btn_text = section.settings.button_text_color | default: '#FFFFFF'
+  assign btn_bg_hover = section.settings.button_bg_hover | default: '#2C1A0E'
+  assign social_bg = section.settings.social_bg_color | default: '#2C1A0E'
+  assign social_icon_color = section.settings.social_icon_color | default: '#FFFFFF'
+  assign social_bg_hover = section.settings.social_bg_hover | default: '#C41E3A'
+  assign legal_color = section.settings.legal_color | default: '#2C1A0E'
+  assign copyright_color = section.settings.copyright_color | default: '#2C1A0E'
+  assign padding_top = section.settings.padding_top | default: 60
+  assign padding_bottom = section.settings.padding_bottom | default: 40
+  assign show_payment = section.settings.show_payment_icons
+-%}
+
+<footer class="schar-footer" id="schar-footer">
+  <div class="schar-footer__inner">
+
+    {%- comment -%} ── MENÚS ── {%- endcomment -%}
+    <div class="schar-footer__menus">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'menu' -%}
+          {%- assign menu_handle = block.settings.menu -%}
+          {%- assign menu_links = linklists[menu_handle].links -%}
+          <div class="schar-footer__menu-col" {{ block.shopify_attributes }}>
+            {%- unless block.settings.title == blank -%}
+              <p class="schar-footer__menu-title">{{ block.settings.title }}</p>
+            {%- endunless -%}
+            {%- if menu_links.size > 0 -%}
+              <ul class="schar-footer__menu-list">
+                {%- for link in menu_links -%}
+                  <li class="schar-footer__menu-item">
+                    <a
+                      href="{{ link.url }}"
+                      class="schar-footer__menu-link{% if link.current %} is-active{% endif %}"
+                      {%- if link.url contains 'http' %} target="_blank" rel="noopener"{% endif -%}
+                    >
+                      {{ link.title }}
+                      {%- if block.settings.show_chevron -%}
+                        <svg class="schar-footer__chevron" viewBox="0 0 24 24" width="16" height="16"><polyline points="9 18 15 12 9 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      {%- endif -%}
+                    </a>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} ── NEWSLETTER ── {%- endcomment -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'newsletter' -%}
+        <div class="schar-footer__newsletter" {{ block.shopify_attributes }}>
+          {%- unless block.settings.title == blank -%}
+            <p class="schar-footer__newsletter-title">{{ block.settings.title }}</p>
+          {%- endunless -%}
+          {%- unless block.settings.text == blank -%}
+            <p class="schar-footer__newsletter-text">{{ block.settings.text }}</p>
+          {%- endunless -%}
+
+          {%- form 'customer', id: 'schar-footer-newsletter' -%}
+            <input type="hidden" name="contact[tags]" value="newsletter">
+            <div class="schar-footer__newsletter-form">
+              <input
+                type="email"
+                name="contact[email]"
+                class="schar-footer__newsletter-input"
+                placeholder="{{ block.settings.placeholder | default: 'Correo electrónico' }}"
+                required
+                autocomplete="email"
+                aria-label="{{ block.settings.placeholder | default: 'Correo electrónico' }}"
+              >
+              <button type="submit" class="schar-footer__newsletter-btn">
+                <span class="schar-footer__newsletter-btn-text">{{ block.settings.button_text | default: 'Enviar' }}</span>
+                <svg class="schar-footer__newsletter-btn-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+            {%- if form.posted_successfully? -%}
+              <p class="schar-footer__newsletter-success">¡Gracias por suscribirte!</p>
+            {%- endif -%}
+            {%- if form.errors -%}
+              <p class="schar-footer__newsletter-error">{{ form.errors.messages['email'] }}</p>
+            {%- endif -%}
+          {%- endform -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- comment -%} ── SOCIAL ── {%- endcomment -%}
+    <div class="schar-footer__social">
+      {%- if section.settings.social_facebook != blank -%}
+        <a href="{{ section.settings.social_facebook }}" class="schar-footer__social-link" aria-label="Facebook" target="_blank" rel="noopener">
+          <img src="{{ 'facebook-light.png' | asset_url }}" alt="Facebook" width="42" height="42" loading="lazy">
+        </a>
+      {%- endif -%}
+      {%- if section.settings.social_instagram != blank -%}
+        <a href="{{ section.settings.social_instagram }}" class="schar-footer__social-link" aria-label="Instagram" target="_blank" rel="noopener">
+          <img src="{{ 'instagram-light.png' | asset_url }}" alt="Instagram" width="42" height="42" loading="lazy">
+        </a>
+      {%- endif -%}
+      {%- if section.settings.social_tiktok != blank -%}
+        <a href="{{ section.settings.social_tiktok }}" class="schar-footer__social-link" aria-label="TikTok" target="_blank" rel="noopener">
+          <img src="{{ 'tiktok-light.png' | asset_url }}" alt="TikTok" width="42" height="42" loading="lazy">
+        </a>
+      {%- endif -%}
+      {%- if section.settings.social_youtube != blank -%}
+        <a href="{{ section.settings.social_youtube }}" class="schar-footer__social-link" aria-label="YouTube" target="_blank" rel="noopener">
+          <img src="{{ 'youtube-light.png' | asset_url }}" alt="YouTube" width="42" height="42" loading="lazy">
+        </a>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} ── LEGALES ── {%- endcomment -%}
+    {%- unless legal_menu == blank -%}
+      <div class="schar-footer__legal">
+        <ul class="schar-footer__legal-list">
+          {%- for link in legal_menu_links -%}
+            <li class="schar-footer__legal-item">
+              <a href="{{ link.url }}" class="schar-footer__legal-link" {%- if link.url contains 'http' %} target="_blank" rel="noopener"{% endif -%}>
+                {{ link.title }}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endunless -%}
+
+    {%- comment -%} ── COPYRIGHT ── {%- endcomment -%}
+    <div class="schar-footer__copyright">
+      <p class="schar-footer__copyright-text">
+        {{ copyright_text }}, {{ 'now' | date: '%Y' }}
+      </p>
+    </div>
+
+    {%- comment -%} ── PAYMENT ICONS ── {%- endcomment -%}
+    {%- if show_payment -%}
+      <div class="schar-footer__payment">
+        {%- unless shop.enabled_payment_types == empty -%}
+          <div class="schar-footer__payment-icons">
+            {%- for type in shop.enabled_payment_types -%}
+              {{ type | payment_type_svg_tag: class: 'schar-footer__payment-icon' }}
+            {%- endfor -%}
+          </div>
+        {%- endunless -%}
+      </div>
+    {%- endif -%}
+
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer Schär",
+  "tag": "section",
+  "class": "schar-footer-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "── COLORES ──"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#F5C842"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color de texto",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color de títulos",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Color de enlaces",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "color",
+      "id": "link_hover_color",
+      "label": "Color enlaces hover",
+      "default": "#C41E3A"
+    },
+    {
+      "type": "header",
+      "content": "── NEWSLETTER ──"
+    },
+    {
+      "type": "color",
+      "id": "input_bg_color",
+      "label": "Fondo del input",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "input_text_color",
+      "label": "Texto del input",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Fondo botón enviar",
+      "default": "#6D6560"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Texto botón enviar",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_hover",
+      "label": "Fondo botón hover",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "header",
+      "content": "── SOCIAL ──"
+    },
+    {
+      "type": "url",
+      "id": "social_facebook",
+      "label": "Facebook"
+    },
+    {
+      "type": "url",
+      "id": "social_instagram",
+      "label": "Instagram"
+    },
+    {
+      "type": "url",
+      "id": "social_tiktok",
+      "label": "TikTok"
+    },
+    {
+      "type": "url",
+      "id": "social_youtube",
+      "label": "YouTube"
+    },
+    {
+      "type": "color",
+      "id": "social_bg_color",
+      "label": "Fondo íconos sociales",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "color",
+      "id": "social_icon_color",
+      "label": "Color íconos sociales",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "social_bg_hover",
+      "label": "Fondo social hover",
+      "default": "#C41E3A"
+    },
+    {
+      "type": "header",
+      "content": "── LEGAL ──"
+    },
+    {
+      "type": "link_list",
+      "id": "legal_menu",
+      "label": "Menú legal"
+    },
+    {
+      "type": "color",
+      "id": "legal_color",
+      "label": "Color enlaces legales",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "header",
+      "content": "── COPYRIGHT ──"
+    },
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "Texto de copyright",
+      "default": "Importadora Deutschmex, S.A. de C.V. · RFC HOM190327S47 · Bosques de Alisos 29, CDMX · Tel: +52 22 2068 0660"
+    },
+    {
+      "type": "color",
+      "id": "copyright_color",
+      "label": "Color del copyright",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "header",
+      "content": "── PAGOS ──"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Mostrar íconos de pago",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "── ESPACIADO ──"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding superior (px)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding inferior (px)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 40,
+      "unit": "px"
+    }
+  ],
+  "max_blocks": 5,
+  "blocks": [
+    {
+      "name": "Menú",
+      "type": "menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menú"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_chevron",
+          "label": "Mostrar flechas ›",
+          "default": true
+        }
+      ]
+    },
+    {
+      "name": "Newsletter",
+      "type": "newsletter",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texto"
+        },
+        {
+          "type": "text",
+          "id": "placeholder",
+          "label": "Placeholder del input",
+          "default": "Correo electrónico"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Texto del botón",
+          "default": "Enviar"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "menu",
+        "settings": {
+          "title": "",
+          "show_chevron": true
+        }
+      },
+      {
+        "type": "menu",
+        "settings": {
+          "title": "",
+          "show_chevron": false
+        }
+      },
+      {
+        "type": "newsletter",
+        "settings": {
+          "placeholder": "Correo electrónico",
+          "button_text": "Enviar"
+        }
+      }
+    ]
+  }
+}
+{% endschema %}
+
+{% style %}
+  @font-face {
+    font-family: 'Times ExtraBold';
+    src: url('https://cdn.shopify.com/s/files/1/0991/5082/3710/files/Times-ExtraBold.otf?v=1777160115') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  #shopify-section-{{ section.id }} {
+    --ft-font-heading: 'Times ExtraBold', 'Playfair Display', serif;
+    --ft-font-body: 'Inter', 'Poppins', sans-serif;
+    --ft-bg: {{ bg_color }};
+    --ft-text: {{ text_color }};
+    --ft-heading: {{ heading_color }};
+    --ft-link: {{ link_color }};
+    --ft-link-hover: {{ link_hover_color }};
+    --ft-input-bg: {{ input_bg }};
+    --ft-input-text: {{ input_text }};
+    --ft-btn-bg: {{ btn_bg }};
+    --ft-btn-text: {{ btn_text }};
+    --ft-btn-bg-hover: {{ btn_bg_hover }};
+    --ft-social-bg: {{ social_bg }};
+    --ft-social-icon: {{ social_icon_color }};
+    --ft-social-bg-hover: {{ social_bg_hover }};
+    --ft-legal: {{ legal_color }};
+    --ft-copyright: {{ copyright_color }};
+    --ft-pt: {{ padding_top }}px;
+    --ft-pb: {{ padding_bottom }}px;
+  }
+
+  /* =============================================
+     BASE
+     ============================================= */
+  .schar-footer {
+    background-color: var(--ft-bg);
+    padding: var(--ft-pt) var(--header-mobile-padding, 22px) var(--ft-pb);
+  }
+
+  .schar-footer__inner {
+    max-width: 1314px;
+    margin: 0 auto;
+  }
+
+  /* =============================================
+     MENÚS – mobile: stacked, desktop: 2 cols
+     ============================================= */
+  .schar-footer__menus {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 40px;
+  }
+
+  .schar-footer__menu-title {
+    font-family: var(--ft-font-body);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ft-heading);
+    margin: 0 0 16px 0;
+  }
+
+  .schar-footer__menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .schar-footer__menu-item {
+    margin-bottom: 10px;
+  }
+
+  .schar-footer__menu-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--ft-font-body);
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--ft-link);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    line-height: 1.4;
+  }
+
+  .schar-footer__menu-link:hover {
+    color: var(--ft-link-hover);
+  }
+
+  .schar-footer__menu-link.is-active {
+    font-weight: 600;
+  }
+
+  .schar-footer__chevron {
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+
+  /* =============================================
+     NEWSLETTER
+     ============================================= */
+  .schar-footer__newsletter {
+    margin-top: 32px;
+  }
+
+  .schar-footer__newsletter-title {
+    font-family: var(--ft-font-body);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ft-heading);
+    margin: 0 0 12px 0;
+  }
+
+  .schar-footer__newsletter-text {
+    font-family: var(--ft-font-body);
+    font-size: 14px;
+    color: var(--ft-text);
+    margin: 0 0 16px 0;
+    line-height: 1.5;
+  }
+
+  .schar-footer__newsletter-form {
+    display: flex;
+    width: 100%;
+    max-width: 480px;
+    height: 52px;
+    border-radius: 50px;
+    overflow: hidden;
+    background-color: var(--ft-input-bg);
+  }
+
+  .schar-footer__newsletter-input {
+    flex: 1;
+    height: 100%;
+    padding: 0 24px;
+    border: none;
+    background: transparent;
+    font-family: var(--ft-font-body);
+    font-size: 15px;
+    color: var(--ft-input-text);
+    outline: none;
+    min-width: 0;
+  }
+
+  .schar-footer__newsletter-input::placeholder {
+    color: var(--ft-input-text);
+    opacity: 0.6;
+  }
+
+  .schar-footer__newsletter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 100%;
+    padding: 0 24px;
+    background-color: var(--ft-btn-bg);
+    color: var(--ft-btn-text);
+    border: none;
+    border-radius: 50px;
+    font-family: var(--ft-font-body);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .schar-footer__newsletter-btn:hover {
+    background-color: var(--ft-btn-bg-hover);
+  }
+
+  .schar-footer__newsletter-btn-icon {
+    flex-shrink: 0;
+  }
+
+  .schar-footer__newsletter-success {
+    margin-top: 8px;
+    font-family: var(--ft-font-body);
+    font-size: 13px;
+    color: #2ABCB4;
+  }
+
+  .schar-footer__newsletter-error {
+    margin-top: 8px;
+    font-family: var(--ft-font-body);
+    font-size: 13px;
+    color: #d20000;
+  }
+
+  /* =============================================
+     SOCIAL
+     ============================================= */
+  .schar-footer__social {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 24px;
+  }
+
+  .schar-footer__social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    text-decoration: none;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .schar-footer__social-link:hover {
+    transform: scale(1.1);
+    opacity: 0.85;
+  }
+
+  .schar-footer__social-link img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    border-radius: 50%;
+  }
+
+  /* =============================================
+     LEGAL
+     ============================================= */
+  .schar-footer__legal {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(44, 26, 14, 0.12);
+  }
+
+  .schar-footer__legal-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 40px;
+  }
+
+  .schar-footer__legal-link {
+    font-family: var(--ft-font-body);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--ft-legal);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    line-height: 1.4;
+  }
+
+  .schar-footer__legal-link:hover {
+    color: var(--ft-link-hover);
+  }
+
+  /* =============================================
+     COPYRIGHT
+     ============================================= */
+  .schar-footer__copyright {
+    margin-top: 24px;
+    text-align: center;
+  }
+
+  .schar-footer__copyright-text {
+    font-family: var(--ft-font-body);
+    font-size: 12px;
+    color: var(--ft-copyright);
+    line-height: 1.5;
+    opacity: 0.7;
+    margin: 0;
+  }
+
+  /* =============================================
+     PAYMENT
+     ============================================= */
+  .schar-footer__payment {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .schar-footer__payment-icons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .schar-footer__payment-icon {
+    height: 24px;
+    width: auto;
+  }
+
+  /* =============================================
+     RESPONSIVE
+     ============================================= */
+
+  /* Tablet */
+  @media (min-width: 681px) {
+    .schar-footer {
+      padding-left: var(--header-tablet-padding, 46px);
+      padding-right: var(--header-tablet-padding, 46px);
+    }
+
+    .schar-footer__menus {
+      gap: 24px 60px;
+    }
+  }
+
+  /* Desktop */
+  @media (min-width: 835px) {
+    .schar-footer {
+      padding-left: var(--header-desktop-padding, 63px);
+      padding-right: var(--header-desktop-padding, 63px);
+    }
+
+    .schar-footer__menus {
+      grid-template-columns: repeat(auto-fit, minmax(180px, max-content));
+      gap: 0 60px;
+      justify-content:space-between;
+    }
+
+    .schar-footer__newsletter {
+      margin-top: 36px;
+    }
+
+    .schar-footer__legal-list {
+      grid-template-columns: repeat(auto-fill, minmax(180px, max-content));
+      gap: 8px 40px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .schar-footer__newsletter-form {
+      height: 48px;
+    }
+
+    .schar-footer__newsletter-input {
+      padding: 0 18px;
+      font-size: 14px;
+    }
+
+    .schar-footer__newsletter-btn {
+      padding: 0 18px;
+      font-size: 14px;
+    }
+
+    .schar-footer__social-link {
+      width: 38px;
+      height: 38px;
+    }
+
+    .schar-footer__social-link svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  @media (hover: hover) {
+    .schar-footer__menu-link:hover { color: var(--ft-link-hover); }
+    .schar-footer__newsletter-btn:hover { background-color: var(--ft-btn-bg-hover); }
+    .schar-footer__legal-link:hover { color: var(--ft-link-hover); }
+  }
+{% endstyle %}
