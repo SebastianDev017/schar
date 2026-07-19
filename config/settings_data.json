@@ -190,7 +190,7 @@
   },
   "platform_customizations": {
     "custom_css": [
-      ".template-404 .main-content{padding-bottom: 0 !important;}"
+      ".template-404 .main-content {padding-bottom: 0 !important;}"
     ]
   }
 }
