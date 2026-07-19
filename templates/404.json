@@ -1,1 +1,79 @@
-{"sections":{"main":{"type":"main-404","disabled":true,"settings":{}},"cover_aXDhUe":{"type":"cover","blocks":{"video_FY8Qri":{"type":"video","settings":{"video_desktop":"shopify://files/videos/7a0879d492984bfcbd48f436441419be.mp4","subtitle":"ERROR 404","title":"<p>No encontramos esta página.</p>","text_paragraph":"Es posible que el enlace esté roto o que la página ya no exista. Descubre nuestros productos sin gluten.","button_label":"Ver productos","button_link":"shopify://collections/all"}}},"block_order":["video_FY8Qri"],"name":"Portada","settings":{"bottom_paragraph":""}}},"order":["main","cover_aXDhUe"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-404",
+      "disabled": true,
+      "settings": {}
+    },
+    "cover_pznVwe": {
+      "type": "cover",
+      "blocks": {
+        "image_d7RNTQ": {
+          "type": "image",
+          "settings": {
+            "desktop_image": "shopify://shop_images/61552HighRes.jpg",
+            "subtitle": "ERROR 404",
+            "title": "<p>No encontramos <br/>esta página.</p>",
+            "text_paragraph": "Es posible que el enlace esté roto o que la página ya no exista. Descubre nuestros productos sin gluten.",
+            "button_label": "ver productos",
+            "button_link": "shopify://collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "image_d7RNTQ"
+      ],
+      "name": "Portada",
+      "settings": {
+        "content_position": "center-left",
+        "text_alignment": "left",
+        "content_max_width": 540,
+        "section_height_desktop": 100,
+        "section_height_mobile": 85,
+        "section_max_height": 800,
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "overlay_color": "#2c1a0e",
+        "overlay_opacity": 50,
+        "heading_tag": "h2",
+        "title_size_desktop": 72,
+        "title_size_mobile": 36,
+        "title_line_height": 105,
+        "title_color": "#ffffff",
+        "title_margin_bottom": 0,
+        "subtitle_size_desktop": 13,
+        "subtitle_size_mobile": 11,
+        "subtitle_color": "#f5c842",
+        "subtitle_margin_bottom": 12,
+        "paragraph_size_desktop": 18,
+        "paragraph_size_mobile": 14,
+        "paragraph_color": "#ffffffe6",
+        "paragraph_margin_top": 16,
+        "button_bg_color": "#e8ddd0",
+        "button_text_color": "#2c1a0e",
+        "button_bg_hover": "#2c1a0e",
+        "button_text_hover": "#ffffff",
+        "button_border_radius": 50,
+        "button_height": 48,
+        "button_padding_x": 32,
+        "button_size_desktop": 13,
+        "button_size_mobile": 12,
+        "button_margin_top": 0,
+        "bottom_paragraph": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "cover_pznVwe"
+  ]
+}
