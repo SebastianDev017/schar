@@ -47,6 +47,13 @@
     box-shadow: none;
   }
 
+  /* Cuando la barra de anuncios está activa, el header transparente (fixed) se
+     desplaza hacia abajo para no taparla. La barra vive en el wrapper sticky
+     #header, así que se mantiene visible en cualquier posición de scroll. */
+  #header:has(.announcement-bar) .schar-header--transparent {
+    margin-top: 30px;
+  }
+
   .schar-header--transparent .schar-header__desktop-link,
   .schar-header--transparent .schar-header__icon-btn svg {
     color: var(--schar-white);
