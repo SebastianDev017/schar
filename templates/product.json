@@ -108,35 +108,6 @@
       "settings": {
         "title": "Productos relacionados"
       }
-    },
-    "ca5b649f-5065-4784-a242-3b1e68aeb5cb": {
-      "type": "logos-carousel",
-      "blocks": {
-        "bab41bee-7517-422d-8664-cf089eb378fe": {
-          "type": "image",
-          "settings": {}
-        },
-        "8c4ba9fa-e45a-4a60-a724-72400da0adc2": {
-          "type": "image",
-          "settings": {}
-        },
-        "fbb98c8e-3dee-4ed9-bcb2-e29847ab4dfc": {
-          "type": "image",
-          "settings": {}
-        }
-      },
-      "block_order": [
-        "bab41bee-7517-422d-8664-cf089eb378fe",
-        "8c4ba9fa-e45a-4a60-a724-72400da0adc2",
-        "fbb98c8e-3dee-4ed9-bcb2-e29847ab4dfc"
-      ],
-      "disabled": true,
-      "settings": {
-        "title": "<p>Lo hicimos bien desde <br/>el <strong>principio</strong></p>",
-        "text": "Schär es una empresa familiar alemana con más de 60 años de experiencia en alimentación orgánica e innovación nutricional. Dale a tus hijos lo mejor de la naturaleza.",
-        "button_label": "Conoce más",
-        "button_link": "shopify://pages/nuestra-historia"
-      }
     }
   },
   "order": [
@@ -144,7 +115,6 @@
     "reviews",
     "info",
     "fbt",
-    "related-products",
-    "ca5b649f-5065-4784-a242-3b1e68aeb5cb"
+    "related-products"
   ]
 }
