@@ -119,6 +119,9 @@
             "show_sample_reviews": true,
             "reviews_selection": "product_reviews",
             "products": [],
+            "filter_pinned": false,
+            "filter_featured": false,
+            "filter_custom_tags": "",
             "star_rating": "all",
             "show_review_media": true,
             "display_order": "media_first",
@@ -511,6 +514,21 @@
         "button_size_mobile": 14,
         "button_margin_top": 32
       }
+    },
+    "1785852852332e82dd": {
+      "type": "apps",
+      "blocks": {
+        "judge_me_reviews_medals_m8gmaB": {
+          "type": "shopify://apps/judge-me-reviews/blocks/medals/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_medals_m8gmaB"
+      ],
+      "settings": {
+        "include_margins": true
+      }
     }
   },
   "order": [
@@ -522,6 +540,7 @@
     "stacked_block_Qzz4we",
     "featured_collection_bxPhVT",
     "category_rows_bdheXR",
-    "faq_preview_qNnLWc"
+    "faq_preview_qNnLWc",
+    "1785852852332e82dd"
   ]
 }
