@@ -108,10 +108,26 @@
       "settings": {
         "title": "Productos relacionados"
       }
+    },
+    "1786393868d9472c62": {
+      "type": "apps",
+      "blocks": {
+        "judge_me_reviews_medals_aaVieB": {
+          "type": "shopify://apps/judge-me-reviews/blocks/medals/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_medals_aaVieB"
+      ],
+      "settings": {
+        "include_margins": true
+      }
     }
   },
   "order": [
     "main",
+    "1786393868d9472c62",
     "reviews",
     "info",
     "fbt",
