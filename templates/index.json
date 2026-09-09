@@ -66,21 +66,6 @@
         "bottom_paragraph": ""
       }
     },
-    "1785852852332e82dd": {
-      "type": "apps",
-      "blocks": {
-        "judge_me_reviews_medals_m8gmaB": {
-          "type": "shopify://apps/judge-me-reviews/blocks/medals/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
-          "settings": {}
-        }
-      },
-      "block_order": [
-        "judge_me_reviews_medals_m8gmaB"
-      ],
-      "settings": {
-        "include_margins": true
-      }
-    },
     "banner_promo_8D3XR7": {
       "type": "banner-promo",
       "custom_css": [
@@ -166,6 +151,31 @@
       },
       "block_order": [
         "judge_me_reviews_cards_carousel_j9ajEr"
+      ],
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "1785852852332e82dd": {
+      "type": "apps",
+      "blocks": {
+        "judge_me_reviews_trust_badge_GVFG49": {
+          "type": "shopify://apps/judge-me-reviews/blocks/trust_badge/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {
+            "structure": "default",
+            "color": "default",
+            "star": "default",
+            "alignment": "left"
+          }
+        },
+        "judge_me_reviews_medals_m8gmaB": {
+          "type": "shopify://apps/judge-me-reviews/blocks/medals/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_trust_badge_GVFG49",
+        "judge_me_reviews_medals_m8gmaB"
       ],
       "settings": {
         "include_margins": true
@@ -300,7 +310,7 @@
       "type": "featured-collection",
       "name": "Colección destacada",
       "settings": {
-        "collection": "galletas-dulces",
+        "collection": "todos-los-productos",
         "max_products": 5,
         "coming_soon_text": "Próximamente...",
         "use_carousel": true,
