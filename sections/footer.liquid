@@ -1,7 +1,8 @@
 {%- comment -%}
   Footer – Schar México
   ✔ Mobile-first
-  ✔ 2 columnas de menú + newsletter + social + legales + copyright
+  ✔ 2 columnas de menú + newsletter + social + legales
+  ✔ Franja de políticas (shop.policies) + barra de datos legales
   ✔ Formulario de newsletter nativo Shopify
   ✔ Máxima personalización (30+ controles)
   ✔ Times ExtraBold headings, Inter body
@@ -10,7 +11,24 @@
 {%- liquid
   assign legal_menu = section.settings.legal_menu
   assign legal_menu_links = linklists[legal_menu].links
-  assign copyright_text = section.settings.copyright_text | default: shop.name
+  assign legal_info = section.settings.copyright_text | strip
+
+  # Políticas reales creadas en Configuración › Políticas. Se buscan por URL
+  # (el título lo puede traducir Shopify) y solo aparecen si tienen contenido.
+  assign policy_terms = nil
+  assign policy_privacy = nil
+  for policy in shop.policies
+    if policy.url contains '/policies/terms-of-service'
+      assign policy_terms = policy
+    elsif policy.url contains '/policies/privacy-policy'
+      assign policy_privacy = policy
+    endif
+  endfor
+
+  assign policy_bar_bg = section.settings.policy_bar_bg | default: '#F5F0EB'
+  assign policy_bar_text = section.settings.policy_bar_text | default: '#2C1A0E'
+  assign legal_bar_bg = section.settings.legal_bar_bg | default: '#2C1A0E'
+  assign legal_bar_text = section.settings.legal_bar_text | default: '#E8DDD0'
   assign bg_color = section.settings.bg_color | default: '#F5C842'
   assign text_color = section.settings.text_color | default: '#2C1A0E'
   assign link_color = section.settings.link_color | default: '#2C1A0E'
@@ -25,13 +43,13 @@
   assign social_icon_color = section.settings.social_icon_color | default: '#FFFFFF'
   assign social_bg_hover = section.settings.social_bg_hover | default: '#C41E3A'
   assign legal_color = section.settings.legal_color | default: '#2C1A0E'
-  assign copyright_color = section.settings.copyright_color | default: '#2C1A0E'
   assign padding_top = section.settings.padding_top | default: 60
   assign padding_bottom = section.settings.padding_bottom | default: 40
   assign show_payment = section.settings.show_payment_icons
 -%}
 
 <footer class="schar-footer" id="schar-footer">
+  <div class="schar-footer__main">
   <div class="schar-footer__inner">
 
     {%- comment -%} ── MENÚS ── {%- endcomment -%}
@@ -145,13 +163,6 @@
       </div>
     {%- endunless -%}
 
-    {%- comment -%} ── COPYRIGHT ── {%- endcomment -%}
-    <div class="schar-footer__copyright">
-      <p class="schar-footer__copyright-text">
-        {{ copyright_text }}, {{ 'now' | date: '%Y' }}
-      </p>
-    </div>
-
     {%- comment -%} ── PAYMENT ICONS ── {%- endcomment -%}
     {%- if show_payment -%}
       <div class="schar-footer__payment">
@@ -165,6 +176,43 @@
       </div>
     {%- endif -%}
 
+  </div>
+  </div>
+
+  {%- comment -%} ── POLÍTICAS (shop.policies) ── {%- endcomment -%}
+  {%- if policy_terms or policy_privacy -%}
+    <nav class="schar-footer__policies" aria-label="{{ section.settings.policy_nav_label | default: 'Información legal' | escape }}">
+      <ul class="schar-footer__policies-list">
+        {%- if policy_terms -%}
+          <li class="schar-footer__policies-item">
+            <a href="{{ policy_terms.url }}" class="schar-footer__policies-link">
+              {{- section.settings.policy_terms_label | default: 'Términos y condiciones' -}}
+            </a>
+          </li>
+        {%- endif -%}
+        {%- if policy_privacy -%}
+          <li class="schar-footer__policies-item">
+            <a href="{{ policy_privacy.url }}" class="schar-footer__policies-link">
+              {{- section.settings.policy_privacy_label | default: 'Aviso de privacidad' -}}
+            </a>
+          </li>
+        {%- endif -%}
+      </ul>
+    </nav>
+  {%- elsif request.design_mode -%}
+    <div class="schar-footer__policies">
+      <p class="schar-footer__policies-empty">
+        Los enlaces aparecen al crear “Términos del servicio” y “Política de privacidad” en Configuración › Políticas.
+      </p>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} ── BARRA LEGAL ── {%- endcomment -%}
+  <div class="schar-footer__legalbar">
+    <p class="schar-footer__legalbar-text">
+      {%- if legal_info != blank -%}{{ legal_info }} · {% endif -%}
+      {{- shop.name }}, {{ 'now' | date: '%Y' -}}
+    </p>
   </div>
 </footer>
 
@@ -301,19 +349,64 @@
     },
     {
       "type": "header",
-      "content": "── COPYRIGHT ──"
+      "content": "── POLÍTICAS ──"
+    },
+    {
+      "type": "paragraph",
+      "content": "Los enlaces salen de Configuración › Políticas. Solo se muestran las políticas que tienen contenido."
+    },
+    {
+      "type": "text",
+      "id": "policy_terms_label",
+      "label": "Texto: términos del servicio",
+      "default": "Términos y condiciones"
+    },
+    {
+      "type": "text",
+      "id": "policy_privacy_label",
+      "label": "Texto: política de privacidad",
+      "default": "Aviso de privacidad"
+    },
+    {
+      "type": "text",
+      "id": "policy_nav_label",
+      "label": "Nombre accesible de la franja",
+      "default": "Información legal"
+    },
+    {
+      "type": "color",
+      "id": "policy_bar_bg",
+      "label": "Fondo de la franja",
+      "default": "#F5F0EB"
+    },
+    {
+      "type": "color",
+      "id": "policy_bar_text",
+      "label": "Color de los enlaces",
+      "default": "#2C1A0E"
+    },
+    {
+      "type": "header",
+      "content": "── BARRA LEGAL ──"
     },
     {
       "type": "text",
       "id": "copyright_text",
-      "label": "Texto de copyright",
+      "label": "Datos legales",
+      "info": "Al final se agregan automáticamente el nombre de la tienda y el año.",
       "default": "Importadora Deutschmex, S.A. de C.V. · RFC HOM190327S47 · Bosques de Alisos 29, CDMX · Tel: +52 22 2068 0660"
     },
     {
       "type": "color",
-      "id": "copyright_color",
-      "label": "Color del copyright",
+      "id": "legal_bar_bg",
+      "label": "Fondo de la barra",
       "default": "#2C1A0E"
+    },
+    {
+      "type": "color",
+      "id": "legal_bar_text",
+      "label": "Color del texto",
+      "default": "#E8DDD0"
     },
     {
       "type": "header",
@@ -458,9 +551,13 @@
     --ft-social-icon: {{ social_icon_color }};
     --ft-social-bg-hover: {{ social_bg_hover }};
     --ft-legal: {{ legal_color }};
-    --ft-copyright: {{ copyright_color }};
+    --ft-policy-bg: {{ policy_bar_bg }};
+    --ft-policy-text: {{ policy_bar_text }};
+    --ft-legalbar-bg: {{ legal_bar_bg }};
+    --ft-legalbar-text: {{ legal_bar_text }};
     --ft-pt: {{ padding_top }}px;
     --ft-pb: {{ padding_bottom }}px;
+    --ft-px: var(--header-mobile-padding, 22px);
   }
 
   /* =============================================
@@ -468,7 +565,10 @@
      ============================================= */
   .schar-footer {
     background-color: var(--ft-bg);
-    padding: var(--ft-pt) var(--header-mobile-padding, 22px) var(--ft-pb);
+  }
+
+  .schar-footer__main {
+    padding: var(--ft-pt) var(--ft-px) var(--ft-pb);
   }
 
   .schar-footer__inner {
@@ -691,20 +791,86 @@
   }
 
   /* =============================================
-     COPYRIGHT
+     POLÍTICAS – franja a todo lo ancho
      ============================================= */
-  .schar-footer__copyright {
-    margin-top: 24px;
+  .schar-footer__policies {
+    background-color: var(--ft-policy-bg);
+    border-top: 1px solid rgba(44, 26, 14, 0.08);
+    padding: 16px var(--ft-px);
+  }
+
+  .schar-footer__policies-list {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 1314px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px 0;
+  }
+
+  .schar-footer__policies-item {
+    display: flex;
+    align-items: center;
+  }
+
+  .schar-footer__policies-item + .schar-footer__policies-item::before {
+    content: '';
+    width: 1px;
+    height: 14px;
+    margin: 0 20px;
+    background-color: var(--ft-policy-text);
+    opacity: 0.25;
+  }
+
+  .schar-footer__policies-link {
+    font-family: var(--ft-font-body);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--ft-policy-text);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 4px;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+  }
+
+  .schar-footer__policies-link:focus-visible {
+    outline: 2px solid var(--ft-link-hover);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .schar-footer__policies-empty {
+    margin: 0 auto;
+    max-width: 1314px;
+    font-family: var(--ft-font-body);
+    font-size: 13px;
+    color: var(--ft-policy-text);
+    opacity: 0.7;
     text-align: center;
   }
 
-  .schar-footer__copyright-text {
+  /* =============================================
+     BARRA LEGAL
+     ============================================= */
+  .schar-footer__legalbar {
+    background-color: var(--ft-legalbar-bg);
+    padding: 14px var(--ft-px);
+  }
+
+  .schar-footer__legalbar-text {
+    margin: 0 auto;
+    max-width: 1314px;
     font-family: var(--ft-font-body);
     font-size: 12px;
-    color: var(--ft-copyright);
-    line-height: 1.5;
-    opacity: 0.7;
-    margin: 0;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+    color: var(--ft-legalbar-text);
+    text-align: center;
+    text-wrap: balance;
   }
 
   /* =============================================
@@ -734,9 +900,8 @@
 
   /* Tablet */
   @media (min-width: 681px) {
-    .schar-footer {
-      padding-left: var(--header-tablet-padding, 46px);
-      padding-right: var(--header-tablet-padding, 46px);
+    #shopify-section-{{ section.id }} {
+      --ft-px: var(--header-tablet-padding, 46px);
     }
 
     .schar-footer__menus {
@@ -746,9 +911,8 @@
 
   /* Desktop */
   @media (min-width: 835px) {
-    .schar-footer {
-      padding-left: var(--header-desktop-padding, 63px);
-      padding-right: var(--header-desktop-padding, 63px);
+    #shopify-section-{{ section.id }} {
+      --ft-px: var(--header-desktop-padding, 63px);
     }
 
     .schar-footer__menus {
@@ -797,5 +961,15 @@
     .schar-footer__menu-link:hover { color: var(--ft-link-hover); }
     .schar-footer__newsletter-btn:hover { background-color: var(--ft-btn-bg-hover); }
     .schar-footer__legal-link:hover { color: var(--ft-link-hover); }
+    .schar-footer__policies-link:hover {
+      color: var(--ft-link-hover);
+      text-decoration-color: currentColor;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .schar-footer__policies-item + .schar-footer__policies-item::before {
+      margin: 0 14px;
+    }
   }
 {% endstyle %}
