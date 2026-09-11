@@ -209,8 +209,9 @@
 
   {%- comment -%} ── BARRA LEGAL ── {%- endcomment -%}
   <div class="schar-footer__legalbar">
+    {%- comment -%} &nbsp; antes de cada "·": al partir la línea, el punto se queda al final y no abre la siguiente {%- endcomment -%}
     <p class="schar-footer__legalbar-text">
-      {%- if legal_info != blank -%}{{ legal_info }} · {% endif -%}
+      {%- if legal_info != blank -%}{{ legal_info | replace: ' · ', '&nbsp;· ' }}&nbsp;· {% endif -%}
       {{- shop.name }}, {{ 'now' | date: '%Y' -}}
     </p>
   </div>
