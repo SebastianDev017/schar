@@ -9,12 +9,12 @@
  */
 {
   "current": {
-    "social_facebook_link": "https://www.facebook.com/schaer.suramerica/",
+    "social_facebook_link": "https://www.facebook.com/schar.mx",
     "social_instagram_link": "https://www.instagram.com/schar_mx/",
     "social_youtube_link": "",
     "favicon": "shopify://shop_images/favicon-1.png",
     "continue_shopping_button_label": "Seguir comprando",
-    "continue_shopping_button_link": "shopify://collections/all",
+    "continue_shopping_button_link": "shopify://collections/todos-los-productos",
     "checkout_logo_image": "shopify://shop_images/Logo_3x_37bf988f-61aa-4dc6-b398-ff2ff577eff8.png",
     "checkout_logo_size": "large",
     "checkout_sidebar_background_color": "#E8DDD0",
@@ -146,7 +146,14 @@
           "social_bg_hover": "#c41e3a",
           "legal_menu": "",
           "legal_color": "#2c1a0e",
+          "policy_terms_label": "Términos y condiciones",
+          "policy_privacy_label": "Aviso de privacidad",
+          "policy_nav_label": "Información legal",
+          "policy_bar_bg": "#f5f0eb",
+          "policy_bar_text": "#2c1a0e",
           "copyright_text": "Importadora Deutschmex, S.A. de C.V. · RFC HOM190327S47 · Bosques de Alisos 29, CDMX · Tel: +52 22 2068 0660",
+          "legal_bar_bg": "#2c1a0e",
+          "legal_bar_text": "#e8ddd0",
           "show_payment_icons": true,
           "padding_top": 60,
           "padding_bottom": 40
