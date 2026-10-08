@@ -31,8 +31,11 @@
     color: {{ section.settings.heading_color | default: '#6D6560' }};
   }
 
+  /* font-family: inherit porque theme.css aplica `h2 *` con la fuente de
+     cuerpo a todo lo que va dentro de un h2, y "reales" salía en Cabin. */
   #shopify-section-{{ section.id }} .schar-apps__heading strong,
   #shopify-section-{{ section.id }} .schar-apps__heading b {
+    font-family: inherit;
     font-weight: 400;
     color: {{ section.settings.heading_accent_color | default: '#C41E3A' }};
   }
@@ -69,8 +72,14 @@
   }
 
   #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-rating-text,
-  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-verified-badge-header {
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-verified-badge-header,
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-verified-text {
     font-size: clamp(17px, calc(17px + 9 * ((100vw - 375px) / (1440 - 375))), 26px);
+  }
+
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-verified-checkmark {
+    width: 1.3em;
+    height: 1.3em;
   }
 
   /* Tarjeta: blanca, esquinas amplias, sin sombra; texto arriba y la firma
@@ -103,10 +112,28 @@
     font-weight: 700;
   }
 
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-reviewer-verified-icon {
+    width: clamp(18px, calc(18px + 5 * ((100vw - 375px) / (1440 - 375))), 23px);
+    height: clamp(18px, calc(18px + 5 * ((100vw - 375px) / (1440 - 375))), 23px);
+  }
+
   #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-product-name,
   #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-product-name a {
     font-size: clamp(13px, calc(13px + 2 * ((100vw - 375px) / (1440 - 375))), 15px);
     color: var(--text-color);
+  }
+
+  /* Tarjetas más anchas, como el diseño. Solo desde el punto en que Judge.me
+     muestra 4 (su contenedor >= 1100px), con su misma container query: crecen
+     de ~229px a 300px según el espacio. Fijo a descontar = 180px (2 flechas de
+     40px + 20px de gap entre cada flecha y las tarjetas + 3 gaps de 20px entre
+     tarjetas; es el mismo cálculo de Judge.me: (1100 - 180) / 4 = 230) + 4px
+     de margen por redondeos. El JS del carrusel mide el ancho real al iniciar,
+     así que el desplazamiento queda alineado. */
+  @container (min-width: 1100px) {
+    #shopify-section-{{ section.id }} .jdgm-cards-carousel {
+      --card-width: min(300px, calc((min(var(--max-width, 1100px), 100cqw) - 184px) / 4));
+    }
   }
 
   /* Flechas más altas y finas; el botón conserva sus 40px de ancho porque
