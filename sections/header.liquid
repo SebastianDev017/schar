@@ -581,6 +581,71 @@
   @media (max-width: 680px) {
     .schar-search__submit { padding: 11px 16px; }
   }
+
+  /* =============================================
+     V3 — LOGO Y ACCIONES DEL HEADER
+     El PNG del logo ya trae su propio bloque amarillo, así que aquí se
+     desactiva la caja amarilla del tema (si no, salen dos amarillos
+     distintos y esquinas redondeadas alrededor de una imagen cuadrada).
+     El margin-bottom negativo deja que el bloque "cuelgue" sin estirar
+     la altura del header, como en el diseño.
+     ============================================= */
+  .schar-header__logo-wrapper--image {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .schar-header__logo-wrapper--image .schar-header__logo-img {
+    height: 64px;
+    width: auto;
+    margin-bottom: -24px;
+  }
+
+  @media (min-width: 681px) {
+    .schar-header__logo-wrapper--image .schar-header__logo-img {
+      height: 104px;
+      margin-bottom: -44px;
+    }
+  }
+
+  @media (min-width: 835px) {
+    .schar-header__logo-wrapper--image .schar-header__logo-img {
+      height: 130px;
+      margin-bottom: -60px;
+    }
+
+    /* El diseño no centra el logo: lo pone a la derecha, junto a los iconos. */
+    .schar-header__inner--menu-logo-icons {
+      grid-template-columns: 1fr auto auto;
+      column-gap: 28px;
+    }
+    .schar-header__inner--menu-logo-icons .schar-header__zone-logo { justify-self: end; }
+
+    /* Iconos en círculo beige, como en el diseño. */
+    .schar-header__icon-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background-color: var(--schar-bg-beige, #E8DDD0);
+      transition: background-color var(--schar-transition);
+    }
+    .schar-header__icon-btn:hover { background-color: var(--schar-yellow); }
+
+    /* Sobre el círculo beige el trazo va oscuro incluso con el header
+       transparente (si no, quedaría blanco sobre beige). */
+    .schar-header--transparent .schar-header__icon-btn svg,
+    .schar-header__icon-btn svg {
+      stroke: var(--schar-dark);
+      color: var(--schar-dark);
+    }
+    .schar-header--transparent .schar-header__icon-btn:hover svg,
+    .schar-header__icon-btn:hover svg { stroke: var(--schar-red); color: var(--schar-red); }
+
+    .schar-header__actions { gap: 12px; }
+    .schar-header__cart-count { top: -2px; right: -2px; }
+  }
+
 </style>
 
 <!-- ============================================= -->
@@ -617,9 +682,9 @@
 
     <div class="schar-header__zone-logo">
       <a href="{{ section.settings.logo_link | default: '/' }}" class="schar-header__logo-link" aria-label="{{ shop.name }}">
-        <span class="schar-header__logo-wrapper">
+        <span class="schar-header__logo-wrapper{% if section.settings.logo != blank %} schar-header__logo-wrapper--image{% endif %}">
           {%- if section.settings.logo != blank -%}
-            <img src="{{ section.settings.logo | image_url: width: 200 }}" alt="{{ section.settings.logo_alt | default: shop.name }}" class="schar-header__logo-img" width="68" height="48" loading="eager">
+            <img src="{{ section.settings.logo | image_url: width: 400 }}" alt="{{ section.settings.logo_alt | default: shop.name }}" class="schar-header__logo-img" width="{{ section.settings.logo.width }}" height="{{ section.settings.logo.height }}" loading="eager">
           {%- else -%}
             <span class="schar-header__logo-fallback">{{ shop.name }}</span>
           {%- endif -%}
@@ -686,7 +751,7 @@
             <a href="{{ section.settings.logo_link | default: '/' }}" aria-label="{{ shop.name }}">
               <span class="schar-drawer__logo-wrapper">
                 {%- if section.settings.logo != blank -%}
-                  <img src="{{ section.settings.logo | image_url: width: 300 }}" alt="{{ section.settings.logo_alt | default: shop.name }}" class="schar-drawer__logo-img" loading="lazy">
+                  <img src="{{ section.settings.logo | image_url: width: 300 }}" alt="{{ section.settings.logo_alt | default: shop.name }}" class="schar-drawer__logo-img" width="{{ section.settings.logo.width }}" height="{{ section.settings.logo.height }}" loading="lazy">
                 {%- else -%}
                   <span class="schar-header__logo-fallback" style="font-size:24px;">{{ shop.name }}</span>
                 {%- endif -%}
@@ -742,7 +807,7 @@
             <a href="{{ section.settings.logo_link | default: '/' }}" aria-label="{{ shop.name }}">
               <span class="schar-drawer__logo-wrapper">
                 {%- if section.settings.logo != blank -%}
-                  <img src="{{ section.settings.logo | image_url: width: 300 }}" alt="{{ section.settings.logo_alt | default: shop.name }}" class="schar-drawer__logo-img" loading="lazy">
+                  <img src="{{ section.settings.logo | image_url: width: 300 }}" alt="{{ section.settings.logo_alt | default: shop.name }}" class="schar-drawer__logo-img" width="{{ section.settings.logo.width }}" height="{{ section.settings.logo.height }}" loading="lazy">
                 {%- else -%}
                   <span class="schar-header__logo-fallback" style="font-size:24px;">{{ shop.name }}</span>
                 {%- endif -%}

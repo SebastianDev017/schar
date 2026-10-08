@@ -35,6 +35,45 @@
       padding-right: var(--header-desktop-padding, 63px);
     }
   }
+
+  /* El CSS de Swiper deja .announcement-bar-item en display:block, así que al
+     poner un ícono éste se apilaba ENCIMA del texto (la barra pasaba de 32 a
+     51px y en móvil saltaba de alto al rotar). Lo forzamos a fila centrada. */
+  #shopify-section-{{ section.id }} .announcement-bar-item{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  #shopify-section-{{ section.id }} .announcement-bar-icon-wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: auto;
+    height: 18px;
+    margin: 0;
+    padding: 0;
+  }
+
+  #shopify-section-{{ section.id }} .announcement-bar-icon-wrapper a{
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .announcement-bar-icon{
+    display: block;
+    height: 100%;
+    width: auto;
+    max-height: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .announcement-bar-text{
+    margin: 0;
+  }
 </style>
 
 {% if announcement_show %}
@@ -56,7 +95,7 @@
                 {%- unless link == blank -%}
                   <a href="{{- link -}}" title="{{- text -}}" {{ target }}>
                 {%- endunless -%}
-                  <img class="announcement-bar-icon" src="{{ icon | image_url: width: 1440 }}" alt="Icono - {{ text | strip_html -}}" fetchpriority="high">
+                  <img class="announcement-bar-icon" src="{{ icon | image_url: width: 120 }}" alt="Icono - {{ text | strip_html -}}" width="{{ icon.width }}" height="{{ icon.height }}" loading="eager">
                 {%- unless link == blank -%}
                   </a>
                 {%- endunless -%}
