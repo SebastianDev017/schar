@@ -74,6 +74,34 @@
   #shopify-section-{{ section.id }} .announcement-bar-text{
     margin: 0;
   }
+
+  /* 901-1099px: con el ícono, el primer mensaje no cabía en su tercio y
+     saltaba a 2 líneas (la barra pasaba de 32 a 50px). En una sola línea el
+     sobrante se reparte centrado hacia los costados y no choca con el
+     mensaje del medio, que es corto. */
+  @media (min-width: 901px){
+    #shopify-section-{{ section.id }} .announcement-bar-text{
+      white-space: nowrap;
+    }
+  }
+
+  /* Carrusel móvil: en pantallas de 360px o menos el mensaje largo partía en
+     2 líneas y la barra cambiaba de alto al rotar. Texto apenas más chico y
+     menos margen lateral en los teléfonos más angostos. */
+  @media (max-width: 480px){
+    #shopify-section-{{ section.id }} .announcement-bar-text{
+      font-size: clamp(12px, 3.6vw, 14px);
+    }
+    #shopify-section-{{ section.id }} .announcement-bar-item{
+      gap: 8px;
+    }
+  }
+  @media (max-width: 380px){
+    #shopify-section-{{ section.id }} .announcement-bar{
+      padding-left: 14px;
+      padding-right: 14px;
+    }
+  }
 </style>
 
 {% if announcement_show %}

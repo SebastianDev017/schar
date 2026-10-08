@@ -41,17 +41,16 @@
     transition: background-color var(--schar-transition), box-shadow var(--schar-transition);
   }
 
+  /* Header transparente: sale del flujo para quedar encima del hero, pero en
+     su posición natural, justo debajo de la barra de anuncios (top:auto). El
+     wrapper #header es sticky, así que barra + header siguen pegados arriba al
+     hacer scroll. Antes era fixed con margin-top:30px fijo, que dejaba 2px de
+     solape con una barra de 32px y no se adaptaba si la barra cambia de alto. */
   .schar-header--transparent {
-    position: fixed;
+    position: absolute;
+    top: auto;
     background-color: transparent;
     box-shadow: none;
-  }
-
-  /* Cuando la barra de anuncios está activa, el header transparente (fixed) se
-     desplaza hacia abajo para no taparla. La barra vive en el wrapper sticky
-     #header, así que se mantiene visible en cualquier posición de scroll. */
-  #header:has(.announcement-bar) .schar-header--transparent {
-    margin-top: 30px;
   }
 
   .schar-header--transparent .schar-header__desktop-link,
@@ -584,35 +583,65 @@
 
   /* =============================================
      V3 — LOGO Y ACCIONES DEL HEADER
-     El PNG del logo ya trae su propio bloque amarillo, así que aquí se
-     desactiva la caja amarilla del tema (si no, salen dos amarillos
-     distintos y esquinas redondeadas alrededor de una imagen cuadrada).
-     El margin-bottom negativo deja que el bloque "cuelgue" sin estirar
-     la altura del header, como en el diseño.
+     El PNG del logo ya trae su propio bloque amarillo, así que se desactiva
+     la caja amarilla del tema.
+
+     El bloque CUELGA de la barra de anuncios: su borde superior es siempre el
+     borde superior del header (= borde inferior de la barra), en cualquier
+     página y estado, sin depender del padding. Para eso el enlace del logo va
+     absolute con top:0 contra el header (sticky o absolute, ambos son
+     contenedor) y su zona en la grilla reserva el ancho exacto del bloque
+     (alto x proporción de la imagen). Así el header mide lo que miden menú e
+     iconos y el logo nunca lo estira ni deja huecos. El justify-content:center
+     de la zona centra el enlace (posición estática de un hijo absolute de un
+     flex container).
      ============================================= */
+  {%- if section.settings.logo != blank %}
+  #schar-header { --schar-logo-ratio: {{ section.settings.logo.aspect_ratio }}; }
+  {%- endif %}
+
   .schar-header__logo-wrapper--image {
     background-color: transparent;
     padding: 0;
     border-radius: 0;
   }
 
-  .schar-header__logo-wrapper--image .schar-header__logo-img {
-    height: 64px;
-    width: auto;
-    margin-bottom: -24px;
+  .schar-header--logo-image { --schar-logo-h: 84px; }
+
+  .schar-header--logo-image .schar-header__zone-logo {
+    width: calc(var(--schar-logo-h) * var(--schar-logo-ratio, 0.64));
+    justify-content: center;
   }
 
+  .schar-header--logo-image .schar-header__logo-link {
+    position: absolute;
+    top: 0;
+  }
+
+  .schar-header--logo-image .schar-header__logo-img {
+    height: var(--schar-logo-h-now, var(--schar-logo-h));
+    width: auto;
+    margin: 0;
+    transition: height var(--schar-transition);
+  }
+
+  /* Con scroll el header se compacta: el logo se encoge para no tapar el
+     contenido que pasa por debajo (sigue pegado a la barra). */
+  .schar-header--logo-image.is-scrolled { --schar-logo-h-now: 66px; }
+
   @media (min-width: 681px) {
-    .schar-header__logo-wrapper--image .schar-header__logo-img {
-      height: 104px;
-      margin-bottom: -44px;
-    }
+    .schar-header--logo-image { --schar-logo-h: 104px; }
   }
 
   @media (min-width: 835px) {
-    .schar-header__logo-wrapper--image .schar-header__logo-img {
-      height: 130px;
-      margin-bottom: -60px;
+    .schar-header--logo-image { --schar-logo-h: clamp(118px, 10.4vw, 190px); }
+    .schar-header--logo-image.is-scrolled { --schar-logo-h-now: 78px; }
+
+    /* Menú e iconos a la altura del diseño (centro ~3.4% del ancho bajo la
+       barra). El estado is-scrolled sigue mandando con sus 10px. */
+    .schar-header__inner {
+      padding-top: clamp(16px, 1.8vw, 30px);
+      padding-bottom: clamp(16px, 1.8vw, 30px);
     }
 
     /* El diseño no centra el logo: lo pone a la derecha, junto a los iconos. */
@@ -651,7 +680,7 @@
 <!-- ============================================= -->
 <!-- HEADER                                        -->
 <!-- ============================================= -->
-<header class="schar-header{{ transparent_class }}" id="schar-header" role="banner">
+<header class="schar-header{{ transparent_class }}{% if section.settings.logo != blank %} schar-header--logo-image{% endif %}" id="schar-header" role="banner">
   <div class="schar-header__inner schar-header__inner--{{ layout }}">
 
     <div class="schar-header__zone-nav">
