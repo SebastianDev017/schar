@@ -71,7 +71,7 @@
           "logo_alt": "Schar Gluten Free",
           "logo_link": "/",
           "layout": "menu-logo-icons",
-          "transparent_header": false,
+          "transparent_header": true,
           "menu": "main-menu",
           "show_search": true,
           "show_account": true,
