@@ -123,7 +123,7 @@
             "filter_featured": false,
             "filter_custom_tags": "",
             "star_rating": "all",
-            "show_review_media": true,
+            "show_review_media": false,
             "display_order": "media_first",
             "no_image_fallback": "review_text_only",
             "max_reviews": 20,
@@ -135,13 +135,13 @@
             "show_product_name": true,
             "hide_arrows_mobile": true,
             "arrows_position": "sides",
-            "max_width": 1100,
+            "max_width": 1400,
             "corner_styling": "soft",
-            "header_text_color": "#000000",
-            "text_color": "#000000",
-            "card_color": "#f9f9f9",
-            "stars_color": "",
-            "arrows_color": "#000000",
+            "header_text_color": "#2c1a0e",
+            "text_color": "#5d504b",
+            "card_color": "#ffffff",
+            "stars_color": "#f5c842",
+            "arrows_color": "#2c1a0e",
             "transition_speed": 5,
             "header_text": "Reseñas reales",
             "show_average_rating": true,
@@ -153,7 +153,8 @@
         "judge_me_reviews_cards_carousel_j9ajEr"
       ],
       "settings": {
-        "include_margins": true
+        "include_margins": true,
+        "heading": "reseñas <strong>reales</strong>"
       }
     },
     "1785852852332e82dd": {

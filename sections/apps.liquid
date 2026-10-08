@@ -1,8 +1,119 @@
+{%- liquid
+  assign heading = section.settings.heading
+  assign hs_m = section.settings.heading_size_mobile | default: 44
+  assign hs_d = section.settings.heading_size_desktop | default: 96
+  assign hs_lo = hs_m | at_most: hs_d
+  assign hs_hi = hs_m | at_least: hs_d
+-%}
+
 <div class="{% if section.settings.include_margins %}page-width{% endif %}">
+  {%- if heading != blank -%}
+    <h2 class="schar-apps__heading">{{ heading }}</h2>
+  {%- endif -%}
   {%- for block in section.blocks -%}
     {% render block %}
   {%- endfor -%}
 </div>
+
+<style>
+  /* =============================================
+     Título propio de la sección (opcional). Va en serif de marca y la parte
+     en negrita toma el color de acento, igual que "conoce nuestra variedad".
+     Tamaño fluido entre 375px y 1440px (fórmula de la guía de marca).
+     ============================================= */
+  #shopify-section-{{ section.id }} .schar-apps__heading {
+    margin: 0 0 18px;
+    font-family: var(--schar-font-heading, 'Times ExtraBold', 'Playfair Display', serif);
+    font-weight: 400;
+    font-size: clamp({{ hs_lo }}px, calc({{ hs_m }}px + ({{ hs_d }} - {{ hs_m }}) * ((100vw - 375px) / (1440 - 375))), {{ hs_hi }}px);
+    line-height: 1.05;
+    text-align: center;
+    color: {{ section.settings.heading_color | default: '#6D6560' }};
+  }
+
+  #shopify-section-{{ section.id }} .schar-apps__heading strong,
+  #shopify-section-{{ section.id }} .schar-apps__heading b {
+    font-weight: 400;
+    color: {{ section.settings.heading_accent_color | default: '#C41E3A' }};
+  }
+
+  {%- if heading != blank %}
+  /* Con título propio se oculta el de la app (es texto plano, no admite dos tonos). */
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-title { display: none; }
+  {%- endif %}
+
+  /* =============================================
+     Judge.me · carrusel de tarjetas, con la tipografía y proporciones de la
+     marca. Colores, ancho máximo y estrellas salen de los ajustes del bloque
+     de la app (variables --card-color, --text-color, --header-color,
+     --stars-color, --arrows-color); aquí solo tamaños y distribución.
+     Nunca se fuerza font-family sobre .jdgm-star: es una fuente de íconos.
+     ============================================= */
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel {
+    padding-top: 0;
+  }
+
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-header {
+    margin-bottom: clamp(28px, calc(28px + 20 * ((100vw - 375px) / (1440 - 375))), 48px);
+  }
+
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-header-info {
+    margin-top: 0;
+    gap: 12px 28px;
+  }
+
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-average-rating { gap: 10px; }
+
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-average-rating .jdgm-star {
+    font-size: clamp(20px, calc(20px + 10 * ((100vw - 375px) / (1440 - 375))), 30px);
+  }
+
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-rating-text,
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-verified-badge-header {
+    font-size: clamp(17px, calc(17px + 9 * ((100vw - 375px) / (1440 - 375))), 26px);
+  }
+
+  /* Tarjeta: blanca, esquinas amplias, sin sombra; texto arriba y la firma
+     (estrellas, nombre, producto) abajo. */
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-card {
+    border: 0;
+    box-shadow: none;
+    border-radius: clamp(18px, calc(18px + 6 * ((100vw - 375px) / (1440 - 375))), 24px);
+    padding: clamp(26px, calc(26px + 14 * ((100vw - 375px) / (1440 - 375))), 40px) clamp(18px, calc(18px + 12 * ((100vw - 375px) / (1440 - 375))), 30px) clamp(22px, calc(22px + 8 * ((100vw - 375px) / (1440 - 375))), 30px);
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-text {
+    font-size: clamp(16px, calc(16px + 4 * ((100vw - 375px) / (1440 - 375))), 20px);
+    line-height: 1.3;
+    place-items: start center;
+  }
+
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-text p { line-height: 1.3; }
+
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-rating-section { gap: 12px; }
+
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-rating-section .jdgm-star {
+    font-size: clamp(24px, calc(24px + 14 * ((100vw - 375px) / (1440 - 375))), 38px);
+  }
+
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-reviewer-name {
+    font-size: clamp(17px, calc(17px + 4 * ((100vw - 375px) / (1440 - 375))), 21px);
+    font-weight: 700;
+  }
+
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-product-name,
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-product-name a {
+    font-size: clamp(13px, calc(13px + 2 * ((100vw - 375px) / (1440 - 375))), 15px);
+    color: var(--text-color);
+  }
+
+  /* Flechas más altas y finas; el botón conserva sus 40px de ancho porque
+     Judge.me descuenta ese ancho al calcular cuántas tarjetas caben. */
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-arrow { height: 64px; }
+  #shopify-section-{{ section.id }} .jdgm-cards-carousel .jdgm-arrow svg { width: 24px; height: 48px; }
+</style>
 
 {% schema %}
 {
@@ -15,6 +126,48 @@
       "id": "include_margins",
       "default": true,
       "label": "t:sections.apps.settings.include_margins.label"
+    },
+    {
+      "type": "header",
+      "content": "Título"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Título",
+      "info": "La parte en negrita toma el color de acento. Si lo llenas, se oculta el título propio de la app."
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color del título",
+      "default": "#6D6560"
+    },
+    {
+      "type": "color",
+      "id": "heading_accent_color",
+      "label": "Color de la parte en negrita",
+      "default": "#C41E3A"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Tamaño del título (escritorio)",
+      "min": 32,
+      "max": 140,
+      "step": 2,
+      "unit": "px",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Tamaño del título (móvil)",
+      "min": 24,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 44
     }
   ],
   "blocks": [
