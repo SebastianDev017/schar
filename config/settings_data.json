@@ -57,7 +57,7 @@
         "settings": {
           "announcement_show": true,
           "announcement_only_index": false,
-          "announcement_background_color": "#f5c842",
+          "announcement_background_color": "#F1CC37",
           "announcement_text_color": "#c41e3a",
           "announcement_autoplay": true,
           "announcement_speed": 9
