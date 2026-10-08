@@ -230,7 +230,6 @@
     },
     "banner_promo_fTfFjD": {
       "type": "banner-promo",
-      "disabled": true,
       "custom_css": [],
       "name": "Banner Promocional",
       "settings": {
@@ -447,14 +446,14 @@
       },
       "block_order": [
         "category_row_GCDF3f",
-        "category_row_mpdUbd",
         "category_row_b9NDan",
-        "category_row_Wwr3Cm",
-        "category_row_a6mGJp",
         "category_row_kd6CwQ",
         "category_row_XcUbRi",
         "category_row_HXwADK",
-        "category_row_xkyHAj"
+        "category_row_mpdUbd",
+        "category_row_a6mGJp",
+        "category_row_xkyHAj",
+        "category_row_Wwr3Cm"
       ],
       "name": "Categorías con Imagen",
       "settings": {
@@ -550,14 +549,14 @@
   "order": [
     "cover",
     "banner_promo_8D3XR7",
+    "banner_promo_fTfFjD",
+    "text_image_icons_Hpnd4N",
+    "featured_collection_bxPhVT",
+    "category_rows_bdheXR",
     "1784313577334ac689",
     "1785852852332e82dd",
     "1789540132acf99902",
-    "text_image_icons_Hpnd4N",
-    "banner_promo_fTfFjD",
     "stacked_block_Qzz4we",
-    "featured_collection_bxPhVT",
-    "category_rows_bdheXR",
     "faq_preview_qNnLWc"
   ]
 }

@@ -10,7 +10,6 @@
   ✔ Font: Times ExtraBold desde CDN
 {%- endcomment -%}
 
-{{- 'css-cover.css' | asset_url | stylesheet_tag -}}
 <script src="{{- 'js-cover.js' | asset_url -}}" defer></script>
 
 {%- liquid
@@ -125,7 +124,7 @@
       {%- case block_type -%}
         {%- when 'image' -%}
           <div class="cover-background cover-background--image">
-            <div class="cover-overlay" style="background: rgba({{ overlay_color | remove: '#' | slice: 0, 2 | prepend: '0x' | plus: 0 }}, {{ overlay_color | remove: '#' | slice: 2, 2 | prepend: '0x' | plus: 0 }}, {{ overlay_color | remove: '#' | slice: 4, 2 | prepend: '0x' | plus: 0 }}, {{ overlay_opacity_decimal }});"></div>
+            <div class="cover-overlay" style="background: {{ overlay_color | color_modify: 'alpha', overlay_opacity_decimal }};"></div>
             <picture>
               {%- if block.settings.mobile_image != blank -%}
                 <source media="(max-width: 680px)" srcset="{{ block.settings.mobile_image | image_url }}">
@@ -138,7 +137,7 @@
 
         {%- when 'video' -%}
           <div class="cover-background cover-background--image">
-            <div class="cover-overlay" style="background: rgba({{ overlay_color | remove: '#' | slice: 0, 2 | prepend: '0x' | plus: 0 }}, {{ overlay_color | remove: '#' | slice: 2, 2 | prepend: '0x' | plus: 0 }}, {{ overlay_color | remove: '#' | slice: 4, 2 | prepend: '0x' | plus: 0 }}, {{ overlay_opacity_decimal }});"></div>
+            <div class="cover-overlay" style="background: {{ overlay_color | color_modify: 'alpha', overlay_opacity_decimal }};"></div>
             {%- if block.settings.video_desktop != blank -%}
               {{ block.settings.video_desktop | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, class: 'cover-video', preload: 'auto' }}
             {%- endif -%}
@@ -769,6 +768,7 @@
   .schar-cover-title b * {
     font-weight: 400 !important;
     font-style: normal;
+    color: var(--subtitle-color);
   }
 
   .cover-subtitle + .cover-title-container {

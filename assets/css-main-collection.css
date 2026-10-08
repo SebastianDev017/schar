@@ -107,3 +107,17 @@
     color: #C41E3A;
   }
 }
+/* =============================================
+   V3 — rejilla de 4 columnas en escritorio
+   El diseño "todos los productos" pide 4 por fila.
+   Va al final para ganarle a la regla base (3 columnas)
+   sin tocar los breakpoints de tablet (<=1023) ni móvil (<=680).
+   ============================================= */
+@media (min-width: 1024px) {
+  .products-grid {
+    --columns-count: 4;
+    --grid-columns-gap: clamp(24px, 3.2vw, 46px);
+    --grid-item-width: clamp(190px, 19vw, 276px);
+    --content-width: min(1314px, calc(100vw - 2 * var(--header-desktop-padding, 63px)));
+  }
+}

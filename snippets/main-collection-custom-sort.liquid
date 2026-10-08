@@ -54,6 +54,12 @@
   /* =============================================
      FILTRO / SORT – Dr. Schär
      ============================================= */
+  /* El diseno V3 centra el control de filtro sobre la rejilla.
+     css-base.css deja .collection-header en flex-end, asi que lo corregimos aqui. */
+  .collection-header {
+    justify-content: center;
+  }
+
   .schar-sort {
     position: relative;
   }
