@@ -57,7 +57,7 @@
         "settings": {
           "announcement_show": true,
           "announcement_only_index": false,
-          "announcement_background_color": "#F1CC37",
+          "announcement_background_color": "#f1cc37",
           "announcement_text_color": "#c41e3a",
           "announcement_autoplay": true,
           "announcement_speed": 9
@@ -70,6 +70,10 @@
           "logo": "shopify://shop_images/LOGO-DR.SCHAR-AMARILLO.png",
           "logo_alt": "Schar Gluten Free",
           "logo_link": "/",
+          "logo_height_desktop": 150,
+          "logo_height_mobile": 84,
+          "logo_height_scrolled_desktop": 120,
+          "logo_height_scrolled_mobile": 60,
           "layout": "menu-logo-icons",
           "transparent_header": true,
           "menu": "main-menu",
