@@ -600,16 +600,35 @@
   #schar-header { --schar-logo-ratio: {{ section.settings.logo.aspect_ratio }}; }
   {%- endif %}
 
+  /* Tamaño del logo controlado desde el editor (sección Header › Tamaño del
+     logo). Entre móvil (375px) y escritorio (1440px) se interpola con la
+     fórmula fluida de la guía de marca; min/max se ordenan en Liquid para
+     que funcione aunque el valor de móvil sea mayor que el de escritorio. */
+  {%- liquid
+    assign lh_m = section.settings.logo_height_mobile | default: 84
+    assign lh_d = section.settings.logo_height_desktop | default: 150
+    assign ls_m = section.settings.logo_height_scrolled_mobile | default: 66
+    assign ls_d = section.settings.logo_height_scrolled_desktop | default: 78
+    assign lh_lo = lh_m | at_most: lh_d
+    assign lh_hi = lh_m | at_least: lh_d
+    assign ls_lo = ls_m | at_most: ls_d
+    assign ls_hi = ls_m | at_least: ls_d
+  -%}
+  #schar-header {
+    --schar-logo-h: clamp({{ lh_lo }}px, calc({{ lh_m }}px + ({{ lh_d }} - {{ lh_m }}) * ((100vw - 375px) / (1440 - 375))), {{ lh_hi }}px);
+    --schar-logo-h-scrolled: clamp({{ ls_lo }}px, calc({{ ls_m }}px + ({{ ls_d }} - {{ ls_m }}) * ((100vw - 375px) / (1440 - 375))), {{ ls_hi }}px);
+  }
+
   .schar-header__logo-wrapper--image {
     background-color: transparent;
     padding: 0;
     border-radius: 0;
   }
 
-  .schar-header--logo-image { --schar-logo-h: 84px; }
-
+  /* La zona reserva el ancho del mayor de los dos tamaños, así el menú y los
+     iconos no se mueven al cambiar de estado. */
   .schar-header--logo-image .schar-header__zone-logo {
-    width: calc(var(--schar-logo-h) * var(--schar-logo-ratio, 0.64));
+    width: calc(max(var(--schar-logo-h), var(--schar-logo-h-scrolled)) * var(--schar-logo-ratio, 0.64));
     justify-content: center;
   }
 
@@ -627,15 +646,9 @@
 
   /* Con scroll el header se compacta: el logo se encoge para no tapar el
      contenido que pasa por debajo (sigue pegado a la barra). */
-  .schar-header--logo-image.is-scrolled { --schar-logo-h-now: 66px; }
-
-  @media (min-width: 681px) {
-    .schar-header--logo-image { --schar-logo-h: 104px; }
-  }
+  .schar-header--logo-image.is-scrolled { --schar-logo-h-now: var(--schar-logo-h-scrolled); }
 
   @media (min-width: 835px) {
-    .schar-header--logo-image { --schar-logo-h: clamp(118px, 10.4vw, 190px); }
-    .schar-header--logo-image.is-scrolled { --schar-logo-h-now: 78px; }
 
     /* Menú e iconos a la altura del diseño (centro ~3.4% del ancho bajo la
        barra). El estado is-scrolled sigue mandando con sus 10px. */
@@ -1092,6 +1105,12 @@
     { "type": "image_picker", "id": "logo", "label": "Logo" },
     { "type": "text", "id": "logo_alt", "label": "Texto alternativo", "default": "Schär Gluten Free" },
     { "type": "url", "id": "logo_link", "label": "Enlace del logo", "default": "/" },
+    { "type": "header", "content": "Tamaño del logo" },
+    { "type": "paragraph", "content": "Alto del bloque del logo. Entre móvil y escritorio el tamaño se ajusta solo, en proporción." },
+    { "type": "range", "id": "logo_height_desktop", "label": "Al abrir la página (escritorio)", "min": 60, "max": 240, "step": 2, "unit": "px", "default": 150 },
+    { "type": "range", "id": "logo_height_mobile", "label": "Al abrir la página (móvil)", "min": 40, "max": 140, "step": 2, "unit": "px", "default": 84 },
+    { "type": "range", "id": "logo_height_scrolled_desktop", "label": "Al hacer scroll (escritorio)", "min": 40, "max": 200, "step": 2, "unit": "px", "default": 78 },
+    { "type": "range", "id": "logo_height_scrolled_mobile", "label": "Al hacer scroll (móvil)", "min": 30, "max": 120, "step": 2, "unit": "px", "default": 66 },
     { "type": "header", "content": "Disposición" },
     {
       "type": "select", "id": "layout", "label": "Layout desktop", "default": "menu-logo-icons",
