@@ -121,3 +121,14 @@
     --content-width: min(1314px, calc(100vw - 2 * var(--header-desktop-padding, 63px)));
   }
 }
+
+/* =============================================
+   Teléfonos muy angostos (<=360px): el mínimo de 155px por tarjeta
+   (2 x 155 + 7 de separación = 317px) no cabe y la página hacía scroll
+   horizontal. Dos columnas iguales que siempre caben.
+   ============================================= */
+@media (max-width: 360px) {
+  .products-grid {
+    grid-template-columns: repeat(var(--columns-count), minmax(0, 1fr));
+  }
+}

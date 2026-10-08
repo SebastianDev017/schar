@@ -102,6 +102,13 @@
       padding-right: 14px;
     }
   }
+  /* En los teléfonos más angostos (320px) ni así cabía en una línea: el
+     mensaje importa más que el ícono, así que el ícono se oculta. */
+  @media (max-width: 340px){
+    #shopify-section-{{ section.id }} .announcement-bar-icon-wrapper{
+      display: none;
+    }
+  }
 </style>
 
 {% if announcement_show %}
