@@ -46,6 +46,25 @@
   assign btn_size_desktop = section.settings.button_size_desktop | default: 14
   assign btn_size_mobile = section.settings.button_size_mobile | default: 13
   assign btn_margin_top = section.settings.button_margin_top | default: 28
+
+  assign image_asset = section.settings.image_asset | strip
+  assign image_asset_mobile = section.settings.image_asset_mobile | strip
+  assign has_image = false
+  if image != blank or image_asset != blank
+    assign has_image = true
+  endif
+  assign framed = section.settings.framed_layout
+  assign image_corner = section.settings.image_corner | default: 'all'
+  assign image_radius = section.settings.image_radius | default: 24
+  assign mobile_image_position = section.settings.mobile_image_position | default: 'top'
+  assign mobile_image_ratio = section.settings.mobile_image_ratio | default: 'auto'
+  assign heading_align_mobile = section.settings.heading_align_mobile | default: 'inherit'
+  assign heading_accent = section.settings.heading_accent_color
+  assign heading_margin_bottom = section.settings.heading_margin_bottom | default: 20
+  assign text_align = section.settings.text_align | default: 'start'
+  assign text_weight = section.settings.text_weight | default: '400'
+  assign text_line_height = section.settings.text_line_height | default: 170
+  assign paragraph_gap = section.settings.paragraph_gap | default: 16
 -%}
 
 {%- capture ratio_class -%}
@@ -58,7 +77,7 @@
   {%- endcase -%}
 {%- endcapture -%}
 
-<section class="schar-iwt schar-iwt--img-{{ image_position }}" data-section-id="{{ section.id }}">
+<section class="schar-iwt schar-iwt--img-{{ image_position }} schar-iwt--corner-{{ image_corner }} schar-iwt--m-img-{{ mobile_image_position }} schar-iwt--m-ratio-{{ mobile_image_ratio }} schar-iwt--m-h-{{ heading_align_mobile }}{% if framed %} schar-iwt--framed{% endif %}" data-section-id="{{ section.id }}">
   <div class="schar-iwt__inner schar-iwt__valign--{{ vertical_align }}">
 
     {%- comment -%} COLUMNA DE TEXTO {%- endcomment -%}
@@ -81,19 +100,46 @@
     </div>
 
     {%- comment -%} COLUMNA DE IMAGEN {%- endcomment -%}
-    {%- if image != blank -%}
+    {%- if has_image -%}
       <div class="schar-iwt__img-col" data-aos="fade-up" data-aos-delay="150">
         <div class="schar-iwt__img-wrap {{ ratio_class }}">
           <picture>
             {%- if mobile_image != blank -%}
               <source media="(max-width: 680px)" srcset="{{ mobile_image | image_url: width: 800 }}">
+            {%- elsif image_asset_mobile != blank -%}
+              <source media="(max-width: 680px)" srcset="{{ image_asset_mobile | asset_url }}">
             {%- endif -%}
-            <img
-              src="{{ image | image_url: width: 1200 }}"
-              alt="{{ image.alt | escape | default: heading | strip_html | escape }}"
-              class="schar-iwt__img"
-              loading="lazy"
-            >
+            {%- if image != blank -%}
+              <img
+                src="{{ image | image_url: width: 1200 }}"
+                alt="{{ image.alt | escape | default: heading | strip_html | escape }}"
+                class="schar-iwt__img"
+                width="{{ image.width }}"
+                height="{{ image.height }}"
+                loading="lazy"
+              >
+            {%- else -%}
+              {%- comment -%}
+                Respaldo: imagen subida al tema. image_asset es el nombre base;
+                se usan BASE-760.webp y BASE-1400.webp de assets.
+              {%- endcomment -%}
+              {%- liquid
+                assign asset_sm = image_asset | append: '-760.webp' | asset_url
+                assign asset_lg = image_asset | append: '-1400.webp' | asset_url
+                assign asset_h = image_custom_ratio | times: 14
+              -%}
+              <img
+                src="{{ asset_lg }}"
+                srcset="{{ asset_sm }} 760w, {{ asset_lg }} 1400w"
+                sizes="(max-width: 680px) 100vw, {{ image_col_width }}vw"
+                alt="{{ heading | strip_html | strip | escape }}"
+                class="schar-iwt__img"
+                width="1400"
+                height="{{ asset_h }}"
+                loading="lazy"
+                decoding="async"
+              >
+            {%- endif -%}
           </picture>
         </div>
       </div>
@@ -128,11 +174,26 @@
       "label": "Proporción de imagen",
       "default": "portrait",
       "options": [
-        { "value": "portrait", "label": "Retrato (3:4)" },
-        { "value": "square", "label": "Cuadrado (1:1)" },
-        { "value": "landscape", "label": "Paisaje (4:3)" },
-        { "value": "auto", "label": "Ajustado a imagen" },
-        { "value": "custom", "label": "Personalizado" }
+        {
+          "value": "portrait",
+          "label": "Retrato (3:4)"
+        },
+        {
+          "value": "square",
+          "label": "Cuadrado (1:1)"
+        },
+        {
+          "value": "landscape",
+          "label": "Paisaje (4:3)"
+        },
+        {
+          "value": "auto",
+          "label": "Ajustado a imagen"
+        },
+        {
+          "value": "custom",
+          "label": "Personalizado"
+        }
       ]
     },
     {
@@ -152,8 +213,14 @@
       "label": "Posición de la imagen",
       "default": "right",
       "options": [
-        { "value": "left", "label": "Izquierda" },
-        { "value": "right", "label": "Derecha" }
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        }
       ]
     },
     {
@@ -165,6 +232,80 @@
       "step": 5,
       "default": 50,
       "unit": "%"
+    },
+    {
+      "type": "text",
+      "id": "image_asset",
+      "label": "Imagen desde el tema (respaldo)",
+      "info": "Se usa si no eliges imagen arriba. Nombre base de un archivo de assets: BASE-760.webp y BASE-1400.webp."
+    },
+    {
+      "type": "text",
+      "id": "image_asset_mobile",
+      "label": "Imagen móvil desde el tema (respaldo)",
+      "info": "Nombre completo del archivo en assets, ej. acerca-calidad-movil.webp."
+    },
+    {
+      "type": "select",
+      "id": "image_corner",
+      "label": "Esquinas de la imagen",
+      "default": "all",
+      "options": [
+        {
+          "value": "all",
+          "label": "Todas redondeadas"
+        },
+        {
+          "value": "outer_bottom",
+          "label": "Solo la inferior exterior"
+        },
+        {
+          "value": "none",
+          "label": "Rectas"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Radio de las esquinas",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "mobile_image_position",
+      "label": "Imagen en móvil",
+      "default": "top",
+      "options": [
+        {
+          "value": "top",
+          "label": "Arriba del texto"
+        },
+        {
+          "value": "bottom",
+          "label": "Debajo del texto"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "mobile_image_ratio",
+      "label": "Proporción de la imagen en móvil",
+      "default": "auto",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Como en escritorio"
+        },
+        {
+          "value": "wide",
+          "label": "Apaisada (16:9)"
+        }
+      ]
     },
     {
       "type": "header",
@@ -202,9 +343,18 @@
       "label": "Alineación vertical",
       "default": "center",
       "options": [
-        { "value": "top", "label": "Arriba" },
-        { "value": "center", "label": "Centro" },
-        { "value": "bottom", "label": "Abajo" }
+        {
+          "value": "top",
+          "label": "Arriba"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "bottom",
+          "label": "Abajo"
+        }
       ]
     },
     {
@@ -226,6 +376,13 @@
       "step": 4,
       "default": 40,
       "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "framed_layout",
+      "label": "Márgenes laterales",
+      "info": "Foto y texto con el mismo margen al borde de la página (en vez de la foto pegada al borde).",
+      "default": false
     },
     {
       "type": "header",
@@ -267,10 +424,22 @@
       "label": "Etiqueta HTML",
       "default": "h2",
       "options": [
-        { "value": "h1", "label": "H1" },
-        { "value": "h2", "label": "H2" },
-        { "value": "h3", "label": "H3" },
-        { "value": "h4", "label": "H4" }
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "h4",
+          "label": "H4"
+        }
       ]
     },
     {
@@ -310,6 +479,42 @@
       "default": "#2C1A0E"
     },
     {
+      "type": "color",
+      "id": "heading_accent_color",
+      "label": "Color de la parte en negrita del título",
+      "info": "Vacío = mismo color que el título."
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom",
+      "label": "Espacio bajo el título",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "heading_align_mobile",
+      "label": "Alineación del título en móvil",
+      "default": "inherit",
+      "options": [
+        {
+          "value": "inherit",
+          "label": "Como el texto"
+        },
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centrado"
+        }
+      ]
+    },
+    {
       "type": "header",
       "content": "── TEXTO ──"
     },
@@ -318,7 +523,7 @@
       "id": "text_size_desktop",
       "label": "Tamaño desktop (px)",
       "min": 12,
-      "max": 24,
+      "max": 32,
       "step": 1,
       "default": 16,
       "unit": "px"
@@ -338,6 +543,70 @@
       "id": "text_color",
       "label": "Color",
       "default": "#2C1A0E"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Alineación del texto",
+      "default": "start",
+      "options": [
+        {
+          "value": "start",
+          "label": "Izquierda"
+        },
+        {
+          "value": "justify",
+          "label": "Justificado"
+        },
+        {
+          "value": "center",
+          "label": "Centrado"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_weight",
+      "label": "Grosor del texto",
+      "default": "400",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medio"
+        },
+        {
+          "value": "600",
+          "label": "Semi negrita"
+        },
+        {
+          "value": "700",
+          "label": "Negrita"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "text_line_height",
+      "label": "Interlineado del texto",
+      "min": 100,
+      "max": 200,
+      "step": 5,
+      "unit": "%",
+      "default": 170
+    },
+    {
+      "type": "range",
+      "id": "paragraph_gap",
+      "label": "Espacio entre párrafos",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 16
     },
     {
       "type": "header",
@@ -453,6 +722,17 @@
     --iwt-btn-desktop: {{ btn_size_desktop }}px;
     --iwt-btn-mobile: {{ btn_size_mobile }}px;
     --iwt-btn-mt: {{ btn_margin_top }}px;
+
+    --iwt-radius: {{ image_radius }}px;
+    --iwt-h-mb: {{ heading_margin_bottom }}px;
+    --iwt-t-align: {{ text_align }};
+    --iwt-t-weight: {{ text_weight }};
+    --iwt-t-lh: {{ text_line_height | divided_by: 100.0 }};
+    --iwt-p-gap: {{ paragraph_gap }}px;
+    --iwt-frame: clamp(22px, 3.03vw, 60px);
+    {%- if heading_accent != blank %}
+    --iwt-h-accent: {{ heading_accent }};
+    {%- endif %}
   }
 
   /* =============================================
@@ -506,12 +786,15 @@
       var(--iwt-h-desktop)
     );
     line-height: var(--iwt-h-lh);
-    margin: 0 0 20px 0;
+    margin: 0 0 var(--iwt-h-mb) 0;
   }
 
+  /* La parte en negrita toma el color de acento si está definido; si no,
+     hereda el color del título (comportamiento anterior). */
   .schar-iwt__heading strong,
   .schar-iwt__heading b {
     font-weight: 400 !important;
+    color: var(--iwt-h-accent, inherit);
   }
 
   .schar-iwt__text,
@@ -522,12 +805,15 @@
       calc(var(--iwt-t-mobile) + ({{ text_size_desktop }} - {{ text_size_mobile }}) * ((100vw - 375px) / (1440 - 375))),
       var(--iwt-t-desktop)
     );
-    line-height: 1.7;
+    line-height: var(--iwt-t-lh);
+    font-weight: var(--iwt-t-weight);
     color: var(--iwt-t-color);
   }
 
+  .schar-iwt__text { text-align: var(--iwt-t-align); }
+
   .schar-iwt__text p { margin: 0; }
-  .schar-iwt__text p + p { margin-top: 16px; }
+  .schar-iwt__text p + p { margin-top: var(--iwt-p-gap); }
 
   .schar-iwt__text strong,
   .schar-iwt__text b {
@@ -593,7 +879,7 @@
     position: relative;
     width: 100%;
     overflow: hidden;
-    border-radius: 24px;
+    border-radius: var(--iwt-radius);
   }
 
   .schar-iwt__img {
@@ -696,4 +982,53 @@
     padding: 0;
   }
 }
+
+  /* =============================================
+     OPCIONES DE DISEÑO (todas opcionales desde los ajustes)
+     ============================================= */
+
+  /* Esquinas de la foto */
+  #shopify-section-{{ section.id }} .schar-iwt--corner-none .schar-iwt__img-wrap { border-radius: 0; }
+  #shopify-section-{{ section.id }} .schar-iwt--corner-outer_bottom .schar-iwt__img-wrap { border-radius: 0; }
+  #shopify-section-{{ section.id }} .schar-iwt--corner-outer_bottom.schar-iwt--img-right .schar-iwt__img-wrap { border-bottom-right-radius: var(--iwt-radius); }
+  #shopify-section-{{ section.id }} .schar-iwt--corner-outer_bottom.schar-iwt--img-left .schar-iwt__img-wrap { border-bottom-left-radius: var(--iwt-radius); }
+
+  /* Márgenes laterales: foto y texto con el mismo margen al borde de la
+     página, en vez de la foto pegada al borde. */
+  @media (min-width: 681px) {
+    #shopify-section-{{ section.id }} .schar-iwt--framed .schar-iwt__inner {
+      padding-left: var(--iwt-frame);
+      padding-right: var(--iwt-frame);
+    }
+    #shopify-section-{{ section.id }} .schar-iwt--framed .schar-iwt__text-col {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+
+  @media (max-width: 680px) {
+    /* En móvil la foto va a todo lo ancho y sin redondeo */
+    #shopify-section-{{ section.id }} .schar-iwt__img-wrap { border-radius: 0; }
+
+    #shopify-section-{{ section.id }} .schar-iwt--m-img-bottom .schar-iwt__text-col { order: 1; }
+    #shopify-section-{{ section.id }} .schar-iwt--m-img-bottom .schar-iwt__img-col { order: 2; }
+
+    #shopify-section-{{ section.id }} .schar-iwt--m-ratio-wide .schar-iwt__img-wrap {
+      aspect-ratio: 360 / 202;
+      padding-bottom: 0;
+      max-height: none;
+    }
+
+    #shopify-section-{{ section.id }} .schar-iwt--m-h-center .schar-iwt__heading,
+    #shopify-section-{{ section.id }} .schar-iwt--m-h-center .schar-iwt__heading * { text-align: center; }
+    #shopify-section-{{ section.id }} .schar-iwt--m-h-left .schar-iwt__heading,
+    #shopify-section-{{ section.id }} .schar-iwt--m-h-left .schar-iwt__heading * { text-align: left; }
+
+    #shopify-section-{{ section.id }} .schar-iwt--framed .schar-iwt__text-col {
+      padding: 22px clamp(16px, 4.7vw, 22px);
+    }
+
+    /* Separación entre párrafos proporcional al texto (máx. 1.2em) */
+    #shopify-section-{{ section.id }} .schar-iwt__text p + p { margin-top: min(var(--iwt-p-gap), 1.2em); }
+  }
 {% endstyle %}
