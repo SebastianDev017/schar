@@ -997,11 +997,13 @@
      OPCIONES DE DISEÑO (todas opcionales desde los ajustes)
      ============================================= */
 
-  /* Esquinas de la foto */
-  #shopify-section-{{ section.id }} .schar-iwt--corner-none .schar-iwt__img-wrap { border-radius: 0; }
-  #shopify-section-{{ section.id }} .schar-iwt--corner-outer_bottom .schar-iwt__img-wrap { border-radius: 0; }
-  #shopify-section-{{ section.id }} .schar-iwt--corner-outer_bottom.schar-iwt--img-right .schar-iwt__img-wrap { border-bottom-right-radius: var(--iwt-radius); }
-  #shopify-section-{{ section.id }} .schar-iwt--corner-outer_bottom.schar-iwt--img-left .schar-iwt__img-wrap { border-bottom-left-radius: var(--iwt-radius); }
+  /* Esquinas de la foto (en móvil la foto va siempre recta, ver abajo) */
+  @media (min-width: 681px) {
+    #shopify-section-{{ section.id }} .schar-iwt--corner-none .schar-iwt__img-wrap { border-radius: 0; }
+    #shopify-section-{{ section.id }} .schar-iwt--corner-outer_bottom .schar-iwt__img-wrap { border-radius: 0; }
+    #shopify-section-{{ section.id }} .schar-iwt--corner-outer_bottom.schar-iwt--img-right .schar-iwt__img-wrap { border-bottom-right-radius: var(--iwt-radius); }
+    #shopify-section-{{ section.id }} .schar-iwt--corner-outer_bottom.schar-iwt--img-left .schar-iwt__img-wrap { border-bottom-left-radius: var(--iwt-radius); }
+  }
 
   /* Márgenes laterales: foto y texto con el mismo margen al borde de la
      página, en vez de la foto pegada al borde. */
