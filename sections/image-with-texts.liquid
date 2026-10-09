@@ -1017,7 +1017,15 @@
   }
 
   @media (max-width: 680px) {
-    /* En móvil la foto va a todo lo ancho y sin redondeo */
+    /* En móvil la foto va a todo lo ancho y sin redondeo. align-self:stretch
+       porque en móvil el contenedor es una columna flex con align-items del
+       ajuste "alineación vertical" (center), y una foto con proporción
+       personalizada (img absoluta) no tiene ancho propio: colapsaba a 0x0. */
+    #shopify-section-{{ section.id }} .schar-iwt__img-col,
+    #shopify-section-{{ section.id }} .schar-iwt__text-col {
+      align-self: stretch;
+      width: 100%;
+    }
     #shopify-section-{{ section.id }} .schar-iwt__img-wrap { border-radius: 0; }
 
     #shopify-section-{{ section.id }} .schar-iwt--m-img-bottom .schar-iwt__text-col { order: 1; }
