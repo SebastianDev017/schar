@@ -723,6 +723,16 @@
     --iwt-btn-mobile: {{ btn_size_mobile }}px;
     --iwt-btn-mt: {{ btn_margin_top }}px;
 
+    /* Números sin unidad para la interpolación fluida: cada sección usa los
+       suyos (antes iban escritos en la regla, que no está acotada a la
+       sección, y la última sección de la página mandaba sobre todas). */
+    --iwt-h-d-n: {{ heading_size_desktop }};
+    --iwt-h-m-n: {{ heading_size_mobile }};
+    --iwt-t-d-n: {{ text_size_desktop }};
+    --iwt-t-m-n: {{ text_size_mobile }};
+    --iwt-b-d-n: {{ btn_size_desktop }};
+    --iwt-b-m-n: {{ btn_size_mobile }};
+
     --iwt-radius: {{ image_radius }}px;
     --iwt-h-mb: {{ heading_margin_bottom }}px;
     --iwt-t-align: {{ text_align }};
@@ -782,7 +792,7 @@
     color: var(--iwt-h-color);
     font-size: clamp(
       var(--iwt-h-mobile),
-      calc(var(--iwt-h-mobile) + ({{ heading_size_desktop }} - {{ heading_size_mobile }}) * ((100vw - 375px) / (1440 - 375))),
+      calc(var(--iwt-h-mobile) + (var(--iwt-h-d-n) - var(--iwt-h-m-n)) * ((100vw - 375px) / (1440 - 375))),
       var(--iwt-h-desktop)
     );
     line-height: var(--iwt-h-lh);
@@ -802,7 +812,7 @@
     font-family: var(--iwt-font-body);
     font-size: clamp(
       var(--iwt-t-mobile),
-      calc(var(--iwt-t-mobile) + ({{ text_size_desktop }} - {{ text_size_mobile }}) * ((100vw - 375px) / (1440 - 375))),
+      calc(var(--iwt-t-mobile) + (var(--iwt-t-d-n) - var(--iwt-t-m-n)) * ((100vw - 375px) / (1440 - 375))),
       var(--iwt-t-desktop)
     );
     line-height: var(--iwt-t-lh);
@@ -846,7 +856,7 @@
     font-family: var(--iwt-font-body);
     font-size: clamp(
       var(--iwt-btn-mobile),
-      calc(var(--iwt-btn-mobile) + ({{ btn_size_desktop }} - {{ btn_size_mobile }}) * ((100vw - 375px) / (1440 - 375))),
+      calc(var(--iwt-btn-mobile) + (var(--iwt-b-d-n) - var(--iwt-b-m-n)) * ((100vw - 375px) / (1440 - 375))),
       var(--iwt-btn-desktop)
     );
     font-weight: 600;
