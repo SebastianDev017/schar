@@ -71,7 +71,7 @@
       "name": "Hecho con lo mejor de nosotros",
       "settings": {
         "image_ratio": "custom",
-        "image_custom_ratio": 109,
+        "image_custom_ratio": 110,
         "image_position": "right",
         "image_col_width": 47,
         "heading": "<p>hecho con<br/><strong>lo mejor de</strong><br/>nosotros</p>",
@@ -122,7 +122,7 @@
       "name": "Imagen con textos",
       "settings": {
         "image_ratio": "custom",
-        "image_custom_ratio": 109,
+        "image_custom_ratio": 110,
         "image_position": "left",
         "image_col_width": 47,
         "heading": "<p><strong>calidad</strong></p>",
@@ -172,7 +172,7 @@
       "name": "Imagen con textos",
       "settings": {
         "image_ratio": "custom",
-        "image_custom_ratio": 109,
+        "image_custom_ratio": 110,
         "image_position": "right",
         "image_col_width": 47,
         "heading": "<p><strong>pasión</strong></p>",
@@ -222,7 +222,7 @@
       "name": "Imagen con textos",
       "settings": {
         "image_ratio": "custom",
-        "image_custom_ratio": 109,
+        "image_custom_ratio": 110,
         "image_position": "left",
         "image_col_width": 47,
         "heading": "<p><strong>conexión</strong></p>",
@@ -272,7 +272,7 @@
       "name": "Imagen con textos",
       "settings": {
         "image_ratio": "custom",
-        "image_custom_ratio": 109,
+        "image_custom_ratio": 110,
         "image_position": "right",
         "image_col_width": 47,
         "heading": "<p><strong>creatividad</strong></p>",
@@ -322,7 +322,7 @@
       "name": "Imagen con textos",
       "settings": {
         "image_ratio": "custom",
-        "image_custom_ratio": 109,
+        "image_custom_ratio": 110,
         "image_position": "left",
         "image_col_width": 47,
         "heading": "<p><strong>inclusión</strong></p>",
